@@ -143,104 +143,115 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Director Greeting Section */}
-      <section className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row-reverse items-center gap-16 lg:gap-24">
-            {/* Director Photo (Right) */}
-            <div className="w-full md:w-2/5 max-w-sm">
-              <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border-8 border-secondary group">
-                <Image 
-                  src="/images/프로필사진.JPG" 
-                  alt="후한의원 구미점 이언호 대표원장" 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
-              </div>
-            </div>
-
-            {/* Director Text (Left) */}
-            <div className="w-full md:w-3/5 text-center md:text-left">
-              <span className="inline-block px-4 py-1 bg-secondary text-point-green rounded-full text-sm font-bold mb-6">
-                Representative Director
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-8 leading-tight break-keep">
-                "환자분들의 일상이 <span className="text-point-green whitespace-nowrap">더욱 건강하고 아름답도록</span>,<br className="hidden lg:block" /> 진심을 다해 진료하겠습니다."
-              </h2>
-              <div className="space-y-6 text-lg text-gray-600 mb-10 leading-relaxed break-keep">
-                <p>
-                  안녕하십니까, 후한의원 구미점 대표원장 <span className="font-bold text-gray-900 underline decoration-point-green/30 decoration-4 underline-offset-4">이언호</span>입니다.
-                </p>
-                <p>
-                  우리 몸은 스스로 치유하고 재생할 수 있는 놀라운 힘을 가지고 있습니다. 
-                  하지만 불규칙한 생활과 스트레스, 각종 환경 요인으로 인해 그 균형이 깨지면 피부 문제와 비만이 찾아오게 됩니다.
-                </p>
-                <p>
-                  후한의원 구미점은 단순히 겉으로 보이는 증상만을 치료하지 않습니다. 
-                  보이지 않는 몸속 원인부터 세밀하게 분석하여, 환자분 한 분 한 분에게 가장 적합한 <span className="font-semibold text-primary">1:1 맞춤 통합 솔루션</span>을 제시해 드립니다.
-                </p>
-                <p>
-                  치료의 모든 과정에서 환자분과 소통하며, 여러분의 삶의 질이 더 높아질 수 있도록 든든한 건강 파트너가 되어드릴 것을 약속드립니다.
-                </p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-8">
-                <p className="text-xl font-bold text-primary italic border-b-2 border-point-green pb-1">후한의원 구미점 대표원장 이언호</p>
-                <Link href="/about#director" className="inline-flex flex-col items-center justify-center bg-point-green text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg hover:bg-[#4a7d44] hover:-translate-y-1 group">
-                  <span className="text-xs opacity-90 font-medium mb-1">의료진 소개</span>
-                  <span className="text-lg">자세히 보기</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4 italic tracking-tight">Clinics & Services</h2>
-            <p className="text-muted text-lg">후한의원 구미점의 주요 진료 과목을 소개합니다.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {services.map((service, index) => (
-              <Link 
-                key={service.title} 
-                href={service.href}
-                className="group flex flex-col bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
-              >
-                <div className="h-64 relative overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={service.image} 
-                    alt={service.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold mb-3 text-primary group-hover:text-point-green transition-colors">{service.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {service.description}
-                  </p>
-                  <div className="mt-6 flex items-center text-sm font-bold text-point-green">
-                    자세히 보기
-                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+      {/* Main Content Area with Background Pattern */}
+      <div className="relative">
+        <div 
+          className="absolute inset-0 z-0 opacity-[0.3] pointer-events-none"
+          style={{ 
+            backgroundImage: 'url("/images/bg-pattern.png")',
+            backgroundSize: '400px',
+            backgroundRepeat: 'repeat'
+          }}
+        ></div>
+        
+        <div className="relative z-10 flex flex-col">
+          {/* Director Greeting Section */}
+          <section className="py-24 bg-transparent overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row-reverse items-center gap-16 lg:gap-24">
+                {/* Director Photo (Right) - Keep solid background for the photo frame only */}
+                <div className="w-full md:w-2/5 max-w-sm">
+                  <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border-8 border-white/50 group">
+                    <Image 
+                      src="/images/프로필사진.JPG" 
+                      alt="후한의원 구미점 이언호 대표원장" 
+                      fill 
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Special Feature: Inpatient Room */}
-      <section className="py-24 bg-secondary">
+                {/* Director Text (Left) */}
+                <div className="w-full md:w-3/5 text-center md:text-left">
+                  <span className="inline-block px-4 py-1 bg-secondary text-point-green rounded-full text-sm font-bold mb-6 shadow-sm">
+                    Representative Director
+                  </span>
+                  <h2 className="text-3xl md:text-4xl font-bold text-primary mb-8 leading-tight break-keep">
+                    "환자분들의 일상이 <span className="text-point-green whitespace-nowrap">더욱 건강하고 아름답도록</span>,<br className="hidden lg:block" /> 진심을 다해 진료하겠습니다."
+                  </h2>
+                  <div className="space-y-6 text-lg text-gray-700 mb-10 leading-relaxed break-keep">
+                    <p>
+                      안녕하십니까, 후한의원 구미점 대표원장 <span className="font-bold text-gray-900 underline decoration-point-green/30 decoration-4 underline-offset-4">이언호</span>입니다.
+                    </p>
+                    <p>
+                      우리 몸은 스스로 치유하고 재생할 수 있는 놀라운 힘을 가지고 있습니다. 
+                      하지만 불규칙한 생활과 스트레스, 각종 환경 요인으로 인해 그 균형이 깨지면 피부 문제와 비만이 찾아오게 됩니다.
+                    </p>
+                    <p>
+                      후한의원 구미점은 단순히 겉으로 보이는 증상만을 치료하지 않습니다. 
+                      보이지 않는 몸속 원인부터 세밀하게 분석하여, 환자분 한 분 한 분에게 가장 적합한 <span className="font-semibold text-primary">1:1 맞춤 통합 솔루션</span>을 제시해 드립니다.
+                    </p>
+                    <p>
+                      치료의 모든 과정에서 환자분과 소통하며, 여러분의 삶의 질이 더 높아질 수 있도록 든든한 건강 파트너가 되어드릴 것을 약속드립니다.
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-8">
+                    <p className="text-xl font-bold text-primary italic border-b-2 border-point-green pb-1">후한의원 구미점 대표원장 이언호</p>
+                    <Link href="/about#director" className="inline-flex flex-col items-center justify-center bg-point-green text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg hover:bg-[#4a7d44] hover:-translate-y-1 group">
+                      <span className="text-xs opacity-90 font-medium mb-1">의료진 소개</span>
+                      <span className="text-lg">자세히 보기</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Services Section */}
+          <section className="py-24 bg-transparent">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-20">
+                <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4 italic tracking-tight">Clinics & Services</h2>
+                <p className="text-muted text-lg">후한의원 구미점의 주요 진료 과목을 소개합니다.</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {services.map((service, index) => (
+                  <Link 
+                    key={service.title} 
+                    href={service.href}
+                    className="group flex flex-col bg-white/60 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-white/40"              >
+                    <div className="h-64 relative overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src={service.image} 
+                        alt={service.title} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
+                    </div>
+                    <div className="p-8">
+                      <h3 className="text-2xl font-bold mb-3 text-primary group-hover:text-point-green transition-colors">{service.title}</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        {service.description}
+                      </p>
+                      <div className="mt-6 flex items-center text-sm font-bold text-point-green">
+                        자세히 보기
+                        <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Special Feature: Inpatient Room */}
+          <section className="py-24 bg-transparent relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="lg:w-1/2 w-full">
@@ -320,6 +331,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+    </div>
+    </div>
     </div>
   );
 }

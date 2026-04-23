@@ -7,7 +7,6 @@ export async function GET() {
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    // 1. 전체 방문자 (통계 분석용)
     const { data: visits, error: vError } = await supabase
       .from('visits')
       .select('*')
@@ -16,7 +15,6 @@ export async function GET() {
 
     if (vError) throw vError;
 
-    // 2. 상담 신청 기록
     const { data: inquiries, error: iError } = await supabase
       .from('inquiries')
       .select('*')
@@ -25,7 +23,6 @@ export async function GET() {
 
     if (iError) throw iError;
 
-    // 3. 통계 계산
     const totalVisits = visits.length;
     const botVisits = visits.filter((v: any) => v.is_bot).length;
     const humanVisits = totalVisits - botVisits;
@@ -53,17 +50,16 @@ export async function GET() {
       referers[ref] = (referers[ref] || 0) + 1;
     });
 
-    // 4. 최근 상세 방문 기록 (50건)
     const recentRawVisits = visits.slice(0, 50).map((v: any) => ({
       id: v.id,
       path: v.path,
       referer: v.referer,
-      ip: v.ip || 'Unknown',
+      ip: v.ip || '0.0.0.0', // Unknown 대신 0.0.0.0으로 표시하여 구별
       isBot: v.is_bot,
       timestamp: v.created_at
     }));
 
-    const stats = {
+    return NextResponse.json({
       totalVisits,
       botVisits,
       humanVisits,
@@ -71,10 +67,8 @@ export async function GET() {
       stats7d,
       stats30d,
       pageViews,
-      recentRawVisits, // 추가됨
-      topReferers: Object.entries(referers)
-        .sort((a: any, b: any) => b[1] - a[1])
-        .slice(0, 15),
+      recentRawVisits,
+      topReferers: Object.entries(referers).sort((a: any, b: any) => b[1] - a[1]).slice(0, 15),
       recentInquiries: inquiries.map((inq: any) => ({
         id: inq.id,
         name: inq.name,
@@ -84,11 +78,8 @@ export async function GET() {
         is_read: inq.is_read,
         timestamp: inq.created_at
       }))
-    };
-
-    return NextResponse.json(stats);
+    });
   } catch (e: any) {
-    console.error('Stats Error:', e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

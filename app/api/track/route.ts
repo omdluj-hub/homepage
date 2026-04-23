@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, isBot } from '@/lib/supabase';
+import { headers } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   try {
     const { path, referer } = await req.json();
-    const userAgent = req.headers.get('user-agent') || 'unknown';
+    const headerList = await headers();
     
-    // IP 주소 추출: x-forwarded-for 헤더를 우선적으로 사용하고, 없으면 x-real-ip를 사용합니다.
-    const xForwardedFor = req.headers.get('x-forwarded-for');
-    const xRealIp = req.headers.get('x-real-ip');
+    const userAgent = headerList.get('user-agent') || 'unknown';
     
-    const ip = xForwardedFor ? xForwardedFor.split(',')[0] : (xRealIp || '127.0.0.1');
+    // IP 주소 추출 시도 (Vercel 특화 헤더 포함)
+    const ip = 
+      headerList.get('x-forwarded-for')?.split(',')[0] || 
+      headerList.get('x-real-ip') || 
+      headerList.get('cf-connecting-ip') || // Cloudflare 등 대응
+      '127.0.0.1';
     
     const bot = isBot(userAgent);
     

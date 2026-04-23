@@ -9,18 +9,45 @@ import {
   ExternalLink,
   ChevronRight,
   TrendingUp,
-  Clock
+  Clock,
+  Lock
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    fetchStats();
-    const interval = setInterval(fetchStats, 30000); // 30초마다 갱신
+    // Check if already authenticated
+    if (typeof window !== "undefined" && localStorage.getItem("admin_auth") === "true") {
+      setIsAuthenticated(true);
+      fetchStats();
+    } else {
+      setLoading(false);
+    }
+
+    const interval = setInterval(() => {
+      if (typeof window !== "undefined" && localStorage.getItem("admin_auth") === "true") {
+        fetchStats();
+      }
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "gnrnal1075") {
+      localStorage.setItem("admin_auth", "true");
+      setIsAuthenticated(true);
+      setLoading(true);
+      fetchStats();
+    } else {
+      setErrorMsg("비밀번호가 올바르지 않습니다.");
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -34,6 +61,48 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("admin_auth");
+    setIsAuthenticated(false);
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="text-primary w-8 h-8" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">관리자 로그인</h1>
+            <p className="text-gray-500 mt-2">보안을 위해 비밀번호를 입력해주세요.</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-center"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMsg("");
+                }}
+              />
+              {errorMsg && <p className="text-red-500 text-sm mt-2 text-center">{errorMsg}</p>}
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-opacity-90 transition-all shadow-lg"
+            >
+              로그인
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -43,12 +112,20 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-            <TrendingUp className="text-primary" />
-            통합 관리자 대시보드
-          </h1>
-          <p className="text-gray-500">후한의원 구미점 홈페이지 실시간 접속 및 문의 통계</p>
+        <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+              <TrendingUp className="text-primary" />
+              통합 관리자 대시보드
+            </h1>
+            <p className="text-gray-500">후한의원 구미점 홈페이지 실시간 접속 및 문의 통계</p>
+          </div>
+          <button 
+            onClick={handleLogout}
+            className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all"
+          >
+            로그아웃
+          </button>
         </header>
 
         {/* Overview Cards */}
@@ -80,10 +157,9 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Inquiry Logs */}
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+              <div className="p-6 border-b border-gray-50">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-primary" />
                   최근 상담 신청 내역
@@ -152,7 +228,6 @@ export default function AdminDashboard() {
             </section>
           </div>
 
-          {/* Right Column: Page Views */}
           <div className="space-y-8">
             <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -169,7 +244,7 @@ export default function AdminDashboard() {
                         <div className="w-8 h-8 flex items-center justify-center bg-secondary rounded-lg text-point-green font-bold text-xs">
                           {count}
                         </div>
-                        <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors">{path}</span>
+                        <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors truncate max-w-[180px]">{path}</span>
                       </div>
                       <ChevronRight className="w-4 h-4 text-gray-300" />
                     </div>

@@ -18,7 +18,9 @@ import {
   ClipboardList,
   Calendar,
   LogOut,
-  Search
+  Trash2,
+  CheckSquare,
+  Square
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -29,7 +31,8 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState("dashboard"); // dashboard, stats, inquiries
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]); // 삭제용 선택 ID 리스트
 
   useEffect(() => {
     if (typeof window !== "undefined" && localStorage.getItem("admin_auth") === "true") {
@@ -89,6 +92,30 @@ export default function AdminDashboard() {
     }
   };
 
+  // 선택 항목 삭제 처리
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`선택한 ${selectedIds.length}개의 문의를 삭제하시겠습니까?`)) return;
+
+    try {
+      const res = await fetch("/api/inquiry", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds })
+      });
+
+      if (res.ok) {
+        setSelectedIds([]);
+        fetchStats();
+        alert("삭제되었습니다.");
+      } else {
+        alert("삭제 중 오류가 발생했습니다.");
+      }
+    } catch (e) {
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("admin_auth");
     setIsAuthenticated(false);
@@ -131,51 +158,25 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans">
-      {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-100 hidden lg:flex flex-col sticky top-0 h-screen">
         <div className="p-6 border-b border-gray-50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold">후</div>
-            <div>
-              <p className="font-bold text-gray-900 leading-tight">관리자 센터</p>
-              <p className="text-[10px] text-gray-400">후한의원 구미점</p>
-            </div>
+            <div><p className="font-bold text-gray-900 leading-tight">관리자 센터</p><p className="text-[10px] text-gray-400">후한의원 구미점</p></div>
           </div>
         </div>
         <nav className="p-4 flex-grow space-y-2">
-          <SidebarLink 
-            icon={<LayoutDashboard size={20} />} 
-            label="대시보드" 
-            active={activeTab === "dashboard"} 
-            onClick={() => setActiveTab("dashboard")} 
-          />
-          <SidebarLink 
-            icon={<BarChart3 size={20} />} 
-            label="방문자 통계" 
-            active={activeTab === "stats"} 
-            onClick={() => setActiveTab("stats")} 
-          />
-          <SidebarLink 
-            icon={<ClipboardList size={20} />} 
-            label="상담 신청 관리" 
-            active={activeTab === "inquiries"} 
-            onClick={() => setActiveTab("inquiries")} 
-          />
+          <SidebarLink icon={<LayoutDashboard size={20} />} label="대시보드" active={activeTab === "dashboard"} onClick={() => setActiveTab("dashboard")} />
+          <SidebarLink icon={<BarChart3 size={20} />} label="방문자 통계" active={activeTab === "stats"} onClick={() => setActiveTab("stats")} />
+          <SidebarLink icon={<ClipboardList size={20} />} label="상담 신청 관리" active={activeTab === "inquiries"} onClick={() => setActiveTab("inquiries")} />
         </nav>
         <div className="p-4 border-t border-gray-50">
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full p-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all text-sm font-medium"
-          >
-            <LogOut size={18} /> 로그아웃
-          </button>
+          <button onClick={handleLogout} className="flex items-center gap-3 w-full p-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all text-sm font-medium"><LogOut size={18} /> 로그아웃</button>
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-grow p-4 md:p-8 md:mr-20 lg:mr-24 overflow-x-hidden">
         <div className="max-w-6xl mx-auto">
-          {/* Top Header */}
           <header className="mb-8 flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
@@ -186,11 +187,12 @@ export default function AdminDashboard() {
               <p className="text-gray-500 text-sm">실시간 데이터 현황입니다.</p>
             </div>
             <div className="flex gap-4">
-              <button 
-                onClick={fetchStats}
-                disabled={isRefreshing}
-                className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group"
-              >
+              {activeTab === "inquiries" && selectedIds.length > 0 && (
+                <button onClick={handleDeleteSelected} className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold shadow-md hover:bg-red-600 transition-all">
+                  <Trash2 size={16} /> {selectedIds.length}개 삭제
+                </button>
+              )}
+              <button onClick={fetchStats} disabled={isRefreshing} className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group">
                 <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
               </button>
             </div>
@@ -198,19 +200,92 @@ export default function AdminDashboard() {
 
           {activeTab === "dashboard" && <DashboardView stats={stats} onTabChange={setActiveTab} />}
           {activeTab === "stats" && <StatsDetailView stats={stats} />}
-          {activeTab === "inquiries" && <InquiryListView stats={stats} onView={handleViewInquiry} />}
+          {activeTab === "inquiries" && (
+            <InquiryListView 
+              stats={stats} 
+              onView={handleViewInquiry} 
+              selectedIds={selectedIds} 
+              setSelectedIds={setSelectedIds} 
+            />
+          )}
         </div>
       </main>
 
-      {/* Detail Modal */}
-      {selectedInquiry && (
-        <InquiryModal inquiry={selectedInquiry} onClose={() => setSelectedInquiry(null)} />
-      )}
+      {selectedInquiry && <InquiryModal inquiry={selectedInquiry} onClose={() => setSelectedInquiry(null)} />}
     </div>
   );
 }
 
 // --- Sub Views ---
+
+function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
+  const toggleSelectAll = () => {
+    if (selectedIds.length === stats?.recentInquiries?.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(stats?.recentInquiries?.map((inq: any) => inq.id) || []);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter((sid: string) => sid !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+
+  return (
+    <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+        <h3 className="font-bold text-gray-900 flex items-center gap-2"><ClipboardList size={18} /> 상담 신청 리스트</h3>
+        <span className="text-xs text-gray-400">총 {stats?.recentInquiries?.length || 0}건</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="text-[12px] uppercase tracking-wider text-gray-400 border-b border-gray-50">
+              <th className="px-6 py-4">
+                <button onClick={toggleSelectAll} className="text-gray-300 hover:text-primary transition-colors">
+                  {selectedIds.length > 0 && selectedIds.length === stats?.recentInquiries?.length ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}
+                </button>
+              </th>
+              <th className="px-6 py-4 font-semibold">상태</th>
+              <th className="px-6 py-4 font-semibold">이름</th>
+              <th className="px-6 py-4 font-semibold">진료분야</th>
+              <th className="px-6 py-4 font-semibold">연락처</th>
+              <th className="px-6 py-4 font-semibold">신청일</th>
+              <th className="px-6 py-4 font-semibold text-right">관리</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {stats?.recentInquiries?.map((inq: any) => (
+              <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-primary/5' : ''} ${selectedIds.includes(inq.id) ? 'bg-blue-50/50' : ''}`}>
+                <td className="px-6 py-4">
+                  <button onClick={() => toggleSelect(inq.id)} className="text-gray-300 hover:text-primary transition-colors">
+                    {selectedIds.includes(inq.id) ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}
+                  </button>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>
+                    {!inq.is_read ? "NEW" : "읽음"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 font-bold text-gray-900">{inq.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{inq.category}</td>
+                <td className="px-6 py-4 text-sm text-gray-500 font-mono">{inq.phone}</td>
+                <td className="px-6 py-4 text-xs text-gray-400">{new Date(inq.timestamp).toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-right">
+                  <button onClick={() => onView(inq)} className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition-all shadow-sm">상세보기</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
 
 function DashboardView({ stats, onTabChange }: any) {
   return (
@@ -221,7 +296,6 @@ function DashboardView({ stats, onTabChange }: any) {
         <StatCard title="안 읽은 상담" value={stats?.unreadInquiries || 0} unit="건" icon={<Mail className="text-red-500" />} color="bg-red-50" />
         <StatCard title="전체 상담" value={stats?.recentInquiries?.length || 0} unit="건" icon={<MessageSquare className="text-orange-500" />} color="bg-orange-50" />
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
@@ -231,16 +305,12 @@ function DashboardView({ stats, onTabChange }: any) {
           <div className="space-y-4">
             {stats?.recentInquiries?.slice(0, 5).map((inq: any) => (
               <div key={inq.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-secondary transition-colors cursor-pointer" onClick={() => onTabChange("inquiries")}>
-                <div>
-                  <p className="font-bold text-gray-900 text-sm">{inq.name}</p>
-                  <p className="text-xs text-gray-500">{inq.category}</p>
-                </div>
+                <div><p className="font-bold text-gray-900 text-sm">{inq.name}</p><p className="text-xs text-gray-500">{inq.category}</p></div>
                 {!inq.is_read && <span className="w-2 h-2 rounded-full bg-red-500"></span>}
               </div>
             ))}
           </div>
         </section>
-
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold flex items-center gap-2"><TrendingUp size={20} className="text-primary" /> 인기 페이지</h3>
@@ -268,33 +338,23 @@ function StatsDetailView({ stats }: any) {
         <StatsPeriodCard title="최근 30일" total={stats?.stats30d?.total} human={stats?.stats30d?.human} bot={stats?.stats30d?.bot} />
         <StatsPeriodCard title="최근 7일" total={stats?.stats7d?.total} human={stats?.stats7d?.human} bot={stats?.stats7d?.bot} />
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2"><ExternalLink size={20} className="text-primary" /> 유입 경로 순위</h3>
           <div className="space-y-4">
             {stats?.topReferers?.map(([domain, count]: any) => (
               <div key={domain} className="space-y-1">
-                <div className="flex justify-between text-xs font-medium">
-                  <span className="text-gray-700">{domain === 'null' ? '직접유입' : domain}</span>
-                  <span className="text-gray-400">{count}</span>
-                </div>
-                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${(count / (stats.totalVisits || 1)) * 100}%` }}></div>
-                </div>
+                <div className="flex justify-between text-xs font-medium"><span className="text-gray-700">{domain === 'null' ? '직접유입' : domain}</span><span className="text-gray-400">{count}</span></div>
+                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden"><div className="bg-primary h-full rounded-full transition-all" style={{ width: `${(count / (stats.totalVisits || 1)) * 100}%` }}></div></div>
               </div>
             ))}
           </div>
         </section>
-
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2"><Clock size={20} className="text-primary" /> 페이지별 상세 조회</h3>
           <div className="space-y-4">
             {Object.entries(stats?.pageViews || {}).sort((a: any, b: any) => b[1] - a[1]).map(([path, count]: any) => (
-              <div key={path} className="flex justify-between items-center border-b border-gray-50 pb-2">
-                <span className="text-sm text-gray-600">{path}</span>
-                <span className="text-sm font-bold text-gray-900">{count.toLocaleString()} <span className="text-[10px] text-gray-400 font-normal ml-1">뷰</span></span>
-              </div>
+              <div key={path} className="flex justify-between items-center border-b border-gray-50 pb-2"><span className="text-sm text-gray-600">{path}</span><span className="text-sm font-bold text-gray-900">{count.toLocaleString()} <span className="text-[10px] text-gray-400 font-normal ml-1">뷰</span></span></div>
             ))}
           </div>
         </section>
@@ -303,57 +363,9 @@ function StatsDetailView({ stats }: any) {
   );
 }
 
-function InquiryListView({ stats, onView }: any) {
-  return (
-    <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
-        <h3 className="font-bold text-gray-900 flex items-center gap-2"><ClipboardList size={18} /> 상담 신청 리스트</h3>
-        <span className="text-xs text-gray-400">총 {stats?.recentInquiries?.length || 0}건</span>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="text-[12px] uppercase tracking-wider text-gray-400 border-b border-gray-50">
-              <th className="px-6 py-4 font-semibold">상태</th>
-              <th className="px-6 py-4 font-semibold">이름</th>
-              <th className="px-6 py-4 font-semibold">진료분야</th>
-              <th className="px-6 py-4 font-semibold">연락처</th>
-              <th className="px-6 py-4 font-semibold">신청일</th>
-              <th className="px-6 py-4 font-semibold text-right">관리</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {stats?.recentInquiries?.map((inq: any) => (
-              <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-primary/5' : ''}`}>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>
-                    {!inq.is_read ? "NEW" : "읽음"}
-                  </span>
-                </td>
-                <td className="px-6 py-4 font-bold text-gray-900">{inq.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{inq.category}</td>
-                <td className="px-6 py-4 text-sm text-gray-500 font-mono">{inq.phone}</td>
-                <td className="px-6 py-4 text-xs text-gray-400">{new Date(inq.timestamp).toLocaleDateString()}</td>
-                <td className="px-6 py-4 text-right">
-                  <button onClick={() => onView(inq)} className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition-all">상세보기</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
 function SidebarLink({ icon, label, active, onClick }: any) {
   return (
-    <button 
-      onClick={onClick}
-      className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all text-sm font-medium ${active ? 'bg-primary text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
-    >
-      {icon} {label}
-    </button>
+    <button onClick={onClick} className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all text-sm font-medium ${active ? 'bg-primary text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}>{icon} {label}</button>
   );
 }
 
@@ -361,10 +373,7 @@ function StatCard({ title, value, unit, icon, color }: any) {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
       <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-2xl`}>{icon}</div>
-      <div>
-        <p className="text-xs text-gray-500 font-medium mb-1">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{Math.round(value).toLocaleString()}<span className="text-sm font-normal text-gray-400 ml-1">{unit}</span></p>
-      </div>
+      <div><p className="text-xs text-gray-500 font-medium mb-1">{title}</p><p className="text-2xl font-bold text-gray-900">{Math.round(value).toLocaleString()}<span className="text-sm font-normal text-gray-400 ml-1">{unit}</span></p></div>
     </div>
   );
 }
@@ -374,19 +383,10 @@ function StatsPeriodCard({ title, total, human, bot }: any) {
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <h4 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-4">{title}</h4>
       <div className="space-y-4">
-        <div className="flex justify-between items-end">
-          <span className="text-sm text-gray-600">총 방문</span>
-          <span className="text-2xl font-black text-gray-900">{total?.toLocaleString()}</span>
-        </div>
+        <div className="flex justify-between items-end"><span className="text-sm text-gray-600">총 방문</span><span className="text-2xl font-black text-gray-900">{total?.toLocaleString()}</span></div>
         <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-50">
-          <div>
-            <p className="text-[10px] text-gray-400 mb-1">실제 사람</p>
-            <p className="text-sm font-bold text-green-600">{human?.toLocaleString()}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-gray-400 mb-1">AI/검색봇</p>
-            <p className="text-sm font-bold text-purple-600">{bot?.toLocaleString()}</p>
-          </div>
+          <div><p className="text-[10px] text-gray-400 mb-1">실제 사람</p><p className="text-sm font-bold text-green-600">{human?.toLocaleString()}</p></div>
+          <div><p className="text-[10px] text-gray-400 mb-1">AI/검색봇</p><p className="text-sm font-bold text-purple-600">{bot?.toLocaleString()}</p></div>
         </div>
       </div>
     </div>
@@ -399,28 +399,15 @@ function InquiryModal({ inquiry, onClose }: any) {
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="bg-primary p-6 text-white flex justify-between items-center">
           <h3 className="text-xl font-bold flex items-center gap-2"><MessageSquare size={20} /> 문의 상세 내용</h3>
-          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full transition-all text-white">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
+          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full transition-all text-white"><svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
         </div>
         <div className="p-8 space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-2xl">
-              <p className="text-xs text-gray-400 mb-1">성함</p>
-              <p className="font-bold text-gray-900">{inquiry.name}</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-2xl">
-              <p className="text-xs text-gray-400 mb-1">진료분야</p>
-              <p className="font-bold text-primary">{inquiry.category}</p>
-            </div>
+            <div className="bg-gray-50 p-4 rounded-2xl"><p className="text-xs text-gray-400 mb-1">성함</p><p className="font-bold text-gray-900">{inquiry.name}</p></div>
+            <div className="bg-gray-50 p-4 rounded-2xl"><p className="text-xs text-gray-400 mb-1">진료분야</p><p className="font-bold text-primary">{inquiry.category}</p></div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-2xl">
-            <p className="text-xs text-gray-400 mb-1">연락처</p>
-            <p className="font-bold text-gray-900 text-lg">{inquiry.phone}</p>
-          </div>
-          <div className="bg-gray-50 p-6 rounded-2xl text-gray-700 leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto">
-            {inquiry.message || "내용이 없습니다."}
-          </div>
+          <div className="bg-gray-50 p-4 rounded-2xl"><p className="text-xs text-gray-400 mb-1">연락처</p><p className="font-bold text-gray-900 text-lg">{inquiry.phone}</p></div>
+          <div className="bg-gray-50 p-6 rounded-2xl text-gray-700 leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto">{inquiry.message || "내용이 없습니다."}</div>
           <button onClick={onClose} className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all">확인</button>
         </div>
       </div>

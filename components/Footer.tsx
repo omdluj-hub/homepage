@@ -34,9 +34,9 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-4 mb-4 md:mb-0">
-            <p className="text-xs text-muted">
+            <Link href="/admin" className="text-xs text-muted hover:text-primary transition-colors">
               © 2026 후한의원 구미점. All rights reserved.
-            </p>
+            </Link>
             <span className="text-gray-300">|</span>
             <Link href="/for-ai" className="text-xs text-gray-400 hover:text-primary transition-colors underline decoration-dotted">
               for AI agents

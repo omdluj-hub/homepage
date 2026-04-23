@@ -6,9 +6,11 @@ export async function POST(req: NextRequest) {
     const { path, referer } = await req.json();
     const userAgent = req.headers.get('user-agent') || 'unknown';
     
-    // IP 주소 추출 (Vercel 및 일반 프록시 환경 대응)
-    const forwarded = req.headers.get('x-forwarded-for');
-    const ip = forwarded ? forwarded.split(',')[0] : req.ip || '127.0.0.1';
+    // IP 주소 추출: x-forwarded-for 헤더를 우선적으로 사용하고, 없으면 x-real-ip를 사용합니다.
+    const xForwardedFor = req.headers.get('x-forwarded-for');
+    const xRealIp = req.headers.get('x-real-ip');
+    
+    const ip = xForwardedFor ? xForwardedFor.split(',')[0] : (xRealIp || '127.0.0.1');
     
     const bot = isBot(userAgent);
     
@@ -18,7 +20,7 @@ export async function POST(req: NextRequest) {
         referer: referer || 'Direct', 
         user_agent: userAgent, 
         is_bot: bot,
-        ip: ip // IP 저장 추가
+        ip: ip
       }
     ]);
 

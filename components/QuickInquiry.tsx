@@ -29,10 +29,11 @@ const QuickInquiry = () => {
         alert("상담 신청이 완료되었습니다. 곧 연락드리겠습니다!");
         setFormData({ name: "", phone: "", category: "다이어트", message: "", privacy: false });
       } else {
-        alert("신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        const errData = await response.json();
+        alert(`신청 중 오류가 발생했습니다: ${errData.error || "잠시 후 다시 시도해 주세요."}`);
       }
-    } catch (e) {
-      alert("신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    } catch (e: any) {
+      alert(`신청 중 오류가 발생했습니다: ${e.message}`);
     }
   };
 

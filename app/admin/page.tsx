@@ -173,7 +173,7 @@ export default function AdminDashboard() {
                       <th className="px-6 py-4 font-semibold">이름</th>
                       <th className="px-6 py-4 font-semibold">연락처</th>
                       <th className="px-6 py-4 font-semibold">진료분야</th>
-                      <th className="px-6 py-4 font-semibold">문의내용</th>
+                      <th className="px-6 py-4 font-semibold text-right">상세보기</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
@@ -189,7 +189,14 @@ export default function AdminDashboard() {
                             {inq.category}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-[200px]">{inq.message}</td>
+                        <td className="px-6 py-4 text-right">
+                          <button 
+                            onClick={() => setSelectedInquiry(inq)}
+                            className="text-xs font-bold text-primary hover:underline bg-primary/5 px-3 py-1 rounded-full transition-all"
+                          >
+                            내용보기
+                          </button>
+                        </td>
                       </tr>
                     ))}
                     {(!stats?.recentInquiries || stats.recentInquiries.length === 0) && (
@@ -254,6 +261,62 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function StatCard({ title, value, icon, color }: any) {
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+      <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-2xl`}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-sm text-gray-500 font-medium">{title}</p>
+        <p className="text-2xl font-bold text-gray-900">{value.toLocaleString()}</p>
+      </div>
+    </div>
+  );
+}
+te/20 p-2 rounded-full transition-all"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-8 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 p-4 rounded-2xl">
+                  <p className="text-xs text-gray-400 mb-1">신청자 성함</p>
+                  <p className="font-bold text-gray-900">{selectedInquiry.name}</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-2xl">
+                  <p className="text-xs text-gray-400 mb-1">진료 분야</p>
+                  <p className="font-bold text-point-green">{selectedInquiry.category}</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-2xl">
+                <p className="text-xs text-gray-400 mb-1">연락처</p>
+                <p className="font-bold text-gray-900 text-lg">{selectedInquiry.phone}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-2 px-1">문의 내용</p>
+                <div className="bg-gray-50 p-6 rounded-2xl text-gray-700 leading-relaxed whitespace-pre-wrap min-h-[150px] max-h-[300px] overflow-y-auto">
+                  {selectedInquiry.message || "입력된 내용이 없습니다."}
+                </div>
+              </div>
+              <div className="text-right text-[10px] text-gray-400 italic">
+                신청 일시: {new Date(selectedInquiry.timestamp).toLocaleString('ko-KR')}
+              </div>
+              <button 
+                onClick={() => setSelectedInquiry(null)}
+                className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all"
+              >
+                확인 완료
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

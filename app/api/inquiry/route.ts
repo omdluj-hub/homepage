@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
         name: inquiryData.name,
         phone: inquiryData.phone,
         category: inquiryData.category,
-        message: inquiryData.message,
-        is_read: false // 기본값은 안 읽음
+        message: inquiryData.message
+        // is_read는 DB의 default false 기능에 맡기고 명시하지 않음으로써 캐시 오류 방지
       }
     ]);
 

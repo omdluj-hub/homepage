@@ -1,30 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readDB, writeDB } from '@/lib/db-utils';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
     const inquiryData = await req.json();
-    const db = readDB();
     
-    const newInquiry = {
-      ...inquiryData,
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString()
-    };
+    const { error } = await supabase.from('inquiries').insert([
+      {
+        name: inquiryData.name,
+        phone: inquiryData.phone,
+        category: inquiryData.category,
+        message: inquiryData.message
+      }
+    ]);
 
-    db.inquiries.unshift(newInquiry);
-    writeDB(db);
-    
+    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (e) {
+    console.error('Inquiry Error:', e);
     return NextResponse.json({ error: 'Failed to submit inquiry' }, { status: 500 });
   }
 }
 
 export async function GET() {
   try {
-    const db = readDB();
-    return NextResponse.json(db.inquiries);
+    const { data, error } = await supabase
+      .from('inquiries')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json({ error: 'Failed to fetch inquiries' }, { status: 500 });
   }

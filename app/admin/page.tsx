@@ -11,12 +11,14 @@ import {
   TrendingUp,
   Clock,
   Lock,
-  Mail
+  Mail,
+  RotateCw
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -51,8 +53,8 @@ export default function AdminDashboard() {
   };
 
   const fetchStats = async () => {
+    setIsRefreshing(true);
     try {
-      // 캐시 방지를 위해 타임스탬프 추가
       const res = await fetch(`/api/stats?t=${Date.now()}`);
       const data = await res.json();
       setStats(data);
@@ -60,37 +62,30 @@ export default function AdminDashboard() {
       console.error("Failed to fetch stats");
     } finally {
       setLoading(false);
+      setTimeout(() => setIsRefreshing(false), 600);
     }
   };
 
-  // 내용보기 클릭 시 읽음 처리
   const handleViewInquiry = async (inq: any) => {
     setSelectedInquiry(inq);
     
-    // 이미 읽은 상태가 아니라면 업데이트 수행
     if (!inq.is_read) {
-      // 1. 화면에서 즉시 상태 변경 (낙관적 업데이트)
       setStats((prev: any) => ({
         ...prev,
-        unreadInquiries: Math.max(0, prev.unreadInquiries - 1),
+        unreadInquiries: Math.max(0, (prev.unreadInquiries || 1) - 1),
         recentInquiries: prev.recentInquiries.map((item: any) => 
           item.id === inq.id ? { ...item, is_read: true } : item
         )
       }));
 
       try {
-        const response = await fetch("/api/inquiry", {
+        await fetch("/api/inquiry", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: inq.id, is_read: true })
         });
-        
-        if (!response.ok) {
-          throw new Error("Failed to update");
-        }
       } catch (e) {
         console.error("Failed to update read status");
-        // 실패 시 다시 데이터를 불러와서 복구
         fetchStats();
       }
     }
@@ -163,7 +158,6 @@ export default function AdminDashboard() {
           </button>
         </header>
 
-        {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <StatCard 
             title="총 방문자" 
@@ -276,7 +270,7 @@ export default function AdminDashboard() {
                       <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                         <div 
                           className="bg-primary h-full rounded-full transition-all duration-1000"
-                          style={{ width: `${Math.min(100, (count / stats.totalVisits) * 100)}%` }}
+                          style={{ width: `${Math.min(100, (count / (stats.totalVisits || 1)) * 100)}%` }}
                         ></div>
                       </div>
                     </div>

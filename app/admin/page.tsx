@@ -173,31 +173,32 @@ export default function AdminDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow p-4 md:p-8 overflow-x-hidden">
-        {/* Top Header */}
-        <header className="mb-8 flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              {activeTab === "dashboard" && "통합 대시보드"}
-              {activeTab === "stats" && "상세 방문자 통계"}
-              {activeTab === "inquiries" && "상담 신청 관리"}
-            </h2>
-            <p className="text-gray-500 text-sm">실시간 데이터 현황입니다.</p>
-          </div>
-          <div className="flex gap-4">
-            <button 
-              onClick={fetchStats}
-              disabled={isRefreshing}
-              className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group"
-            >
-              <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
-        </header>
+      <main className="flex-grow p-4 md:p-8 md:mr-20 lg:mr-24 overflow-x-hidden">
+        <div className="max-w-6xl mx-auto">
+          {/* Top Header */}
+          <header className="mb-8 flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {activeTab === "dashboard" && "통합 대시보드"}
+                {activeTab === "stats" && "상세 방문자 통계"}
+                {activeTab === "inquiries" && "상담 신청 관리"}
+              </h2>
+              <p className="text-gray-500 text-sm">실시간 데이터 현황입니다.</p>
+            </div>
+            <div className="flex gap-4">
+              <button 
+                onClick={fetchStats}
+                disabled={isRefreshing}
+                className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group"
+              >
+                <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+          </header>
 
-        {activeTab === "dashboard" && <DashboardView stats={stats} onTabChange={setActiveTab} />}
-        {activeTab === "stats" && <StatsDetailView stats={stats} />}
-        {activeTab === "inquiries" && <InquiryListView stats={stats} onView={handleViewInquiry} />}
+          {activeTab === "dashboard" && <DashboardView stats={stats} onTabChange={setActiveTab} />}
+          {activeTab === "stats" && <StatsDetailView stats={stats} />}
+          {activeTab === "inquiries" && <InquiryListView stats={stats} onView={handleViewInquiry} />}
         </div>
       </main>
 
@@ -214,7 +215,6 @@ export default function AdminDashboard() {
 function DashboardView({ stats, onTabChange }: any) {
   return (
     <div className="space-y-8">
-      {/* Quick Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="오늘의 방문자" value={stats?.stats7d?.total / 7 || 0} unit="명" icon={<Users className="text-blue-500" />} color="bg-blue-50" />
         <StatCard title="최근 7일 방문" value={stats?.stats7d?.total || 0} unit="명" icon={<Calendar className="text-green-500" />} color="bg-green-50" />
@@ -223,7 +223,6 @@ function DashboardView({ stats, onTabChange }: any) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Inquiries Snippet */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold flex items-center gap-2"><ClipboardList size={20} className="text-primary" /> 최근 문의</h3>
@@ -242,7 +241,6 @@ function DashboardView({ stats, onTabChange }: any) {
           </div>
         </section>
 
-        {/* Popular Pages Snippet */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold flex items-center gap-2"><TrendingUp size={20} className="text-primary" /> 인기 페이지</h3>
@@ -265,7 +263,6 @@ function DashboardView({ stats, onTabChange }: any) {
 function StatsDetailView({ stats }: any) {
   return (
     <div className="space-y-8">
-      {/* Comparison Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <StatsPeriodCard title="전체 기록" total={stats?.totalVisits} human={stats?.humanVisits} bot={stats?.botVisits} />
         <StatsPeriodCard title="최근 30일" total={stats?.stats30d?.total} human={stats?.stats30d?.human} bot={stats?.stats30d?.bot} />
@@ -273,7 +270,6 @@ function StatsDetailView({ stats }: any) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Top Referers */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2"><ExternalLink size={20} className="text-primary" /> 유입 경로 순위</h3>
           <div className="space-y-4">
@@ -284,14 +280,13 @@ function StatsDetailView({ stats }: any) {
                   <span className="text-gray-400">{count}</span>
                 </div>
                 <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${(count / stats.totalVisits) * 100}%` }}></div>
+                  <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${(count / (stats.totalVisits || 1)) * 100}%` }}></div>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Detailed Page Views */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2"><Clock size={20} className="text-primary" /> 페이지별 상세 조회</h3>
           <div className="space-y-4">
@@ -351,8 +346,6 @@ function InquiryListView({ stats, onView }: any) {
   );
 }
 
-// --- Common Components ---
-
 function SidebarLink({ icon, label, active, onClick }: any) {
   return (
     <button 
@@ -406,7 +399,9 @@ function InquiryModal({ inquiry, onClose }: any) {
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="bg-primary p-6 text-white flex justify-between items-center">
           <h3 className="text-xl font-bold flex items-center gap-2"><MessageSquare size={20} /> 문의 상세 내용</h3>
-          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full"><RotateCw className="rotate-45" /></button>
+          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full transition-all text-white">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
         <div className="p-8 space-y-6">
           <div className="grid grid-cols-2 gap-4">
@@ -427,11 +422,6 @@ function InquiryModal({ inquiry, onClose }: any) {
             {inquiry.message || "내용이 없습니다."}
           </div>
           <button onClick={onClose} className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all">확인</button>
-        </div>
-      </div>
-    </div>
-  );
-}
         </div>
       </div>
     </div>

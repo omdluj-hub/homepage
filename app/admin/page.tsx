@@ -12,7 +12,13 @@ import {
   Clock,
   Lock,
   Mail,
-  RotateCw
+  RotateCw,
+  LayoutDashboard,
+  BarChart3,
+  ClipboardList,
+  Calendar,
+  LogOut,
+  Search
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -23,6 +29,7 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("dashboard"); // dashboard, stats, inquiries
 
   useEffect(() => {
     if (typeof window !== "undefined" && localStorage.getItem("admin_auth") === "true") {
@@ -31,13 +38,6 @@ export default function AdminDashboard() {
     } else {
       setLoading(false);
     }
-
-    const interval = setInterval(() => {
-      if (typeof window !== "undefined" && localStorage.getItem("admin_auth") === "true") {
-        fetchStats();
-      }
-    }, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -68,7 +68,6 @@ export default function AdminDashboard() {
 
   const handleViewInquiry = async (inq: any) => {
     setSelectedInquiry(inq);
-    
     if (!inq.is_read) {
       setStats((prev: any) => ({
         ...prev,
@@ -77,7 +76,6 @@ export default function AdminDashboard() {
           item.id === inq.id ? { ...item, is_read: true } : item
         )
       }));
-
       try {
         await fetch("/api/inquiry", {
           method: "PATCH",
@@ -108,23 +106,15 @@ export default function AdminDashboard() {
             <p className="text-gray-500 mt-2">보안을 위해 비밀번호를 입력해주세요.</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-center"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setErrorMsg("");
-                }}
-              />
-              {errorMsg && <p className="text-red-500 text-sm mt-2 text-center">{errorMsg}</p>}
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-opacity-90 transition-all shadow-lg"
-            >
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-center"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setErrorMsg(""); }}
+            />
+            {errorMsg && <p className="text-red-500 text-sm mt-2 text-center">{errorMsg}</p>}
+            <button type="submit" className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-opacity-90 transition-all shadow-lg">
               로그인
             </button>
           </form>
@@ -140,241 +130,303 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-              <TrendingUp className="text-primary" />
-              통합 관리자 대시보드
-            </h1>
-            <p className="text-gray-500">후한의원 구미점 홈페이지 실시간 접속 및 문의 통계</p>
+    <div className="flex min-h-screen bg-gray-50 font-sans">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-100 hidden lg:flex flex-col sticky top-0 h-screen">
+        <div className="p-6 border-b border-gray-50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold">후</div>
+            <div>
+              <p className="font-bold text-gray-900 leading-tight">관리자 센터</p>
+              <p className="text-[10px] text-gray-400">후한의원 구미점</p>
+            </div>
           </div>
+        </div>
+        <nav className="p-4 flex-grow space-y-2">
+          <SidebarLink 
+            icon={<LayoutDashboard size={20} />} 
+            label="대시보드" 
+            active={activeTab === "dashboard"} 
+            onClick={() => setActiveTab("dashboard")} 
+          />
+          <SidebarLink 
+            icon={<BarChart3 size={20} />} 
+            label="방문자 통계" 
+            active={activeTab === "stats"} 
+            onClick={() => setActiveTab("stats")} 
+          />
+          <SidebarLink 
+            icon={<ClipboardList size={20} />} 
+            label="상담 신청 관리" 
+            active={activeTab === "inquiries"} 
+            onClick={() => setActiveTab("inquiries")} 
+          />
+        </nav>
+        <div className="p-4 border-t border-gray-50">
           <button 
             onClick={handleLogout}
-            className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all"
+            className="flex items-center gap-3 w-full p-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all text-sm font-medium"
           >
-            로그아웃
+            <LogOut size={18} /> 로그아웃
           </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-grow p-4 md:p-8 overflow-x-hidden">
+        {/* Top Header */}
+        <header className="mb-8 flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {activeTab === "dashboard" && "통합 대시보드"}
+              {activeTab === "stats" && "상세 방문자 통계"}
+              {activeTab === "inquiries" && "상담 신청 관리"}
+            </h2>
+            <p className="text-gray-500 text-sm">실시간 데이터 현황입니다.</p>
+          </div>
+          <div className="flex gap-4">
+            <button 
+              onClick={fetchStats}
+              disabled={isRefreshing}
+              className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group"
+            >
+              <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <StatCard 
-            title="총 방문자" 
-            value={stats?.totalVisits || 0} 
-            icon={<Users className="text-blue-500" />} 
-            color="bg-blue-50"
-          />
-          <StatCard 
-            title="AI/검색봇 방문" 
-            value={stats?.botVisits || 0} 
-            icon={<Bot className="text-purple-500" />} 
-            color="bg-purple-50"
-          />
-          <StatCard 
-            title="안 읽은 상담" 
-            value={stats?.unreadInquiries || 0} 
-            icon={<Mail className={stats?.unreadInquiries > 0 ? "text-red-500 animate-pulse" : "text-gray-400"} />} 
-            color={stats?.unreadInquiries > 0 ? "bg-red-50" : "bg-gray-50"}
-          />
-          <StatCard 
-            title="총 상담 신청" 
-            value={stats?.recentInquiries?.length || 0} 
-            icon={<MessageSquare className="text-orange-500" />} 
-            color="bg-orange-50"
-          />
-        </div>
+        {activeTab === "dashboard" && <DashboardView stats={stats} onTabChange={setActiveTab} />}
+        {activeTab === "stats" && <StatsDetailView stats={stats} />}
+        {activeTab === "inquiries" && <InquiryListView stats={stats} onView={handleViewInquiry} />}
+      </main>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-primary" />
-                  최근 상담 신청 내역
-                </h2>
-                <button 
-                  onClick={fetchStats}
-                  disabled={isRefreshing}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-all group"
-                  title="새로고침"
-                >
-                  <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 text-gray-500 text-sm">
-                      <th className="px-6 py-4 font-semibold">상태</th>
-                      <th className="px-6 py-4 font-semibold">날짜</th>
-                      <th className="px-6 py-4 font-semibold">이름</th>
-                      <th className="px-6 py-4 font-semibold">연락처</th>
-                      <th className="px-6 py-4 font-semibold">진료분야</th>
-                      <th className="px-6 py-4 font-semibold text-right">상세보기</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {stats?.recentInquiries?.map((inq: any) => (
-                      <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-red-50/30' : ''}`}>
-                        <td className="px-6 py-4">
-                          {!inq.is_read ? (
-                            <span className="flex h-2 w-2 rounded-full bg-red-500"></span>
-                          ) : (
-                            <span className="flex h-2 w-2 rounded-full bg-gray-200"></span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-xs text-gray-400">
-                          {new Date(inq.timestamp).toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </td>
-                        <td className="px-6 py-4 font-medium text-gray-900">{inq.name}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600 font-mono">{inq.phone}</td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-1 bg-secondary text-point-green rounded-md text-xs font-bold">
-                            {inq.category}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <button 
-                            onClick={() => handleViewInquiry(inq)}
-                            className={`text-xs font-bold px-3 py-1 rounded-full transition-all ${!inq.is_read ? 'bg-primary text-white' : 'text-primary bg-primary/5 hover:underline'}`}
-                          >
-                            {!inq.is_read ? '읽기' : '내용보기'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                    {(!stats?.recentInquiries || stats.recentInquiries.length === 0) && (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-10 text-center text-gray-400">최근 문의 내역이 없습니다.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <ExternalLink className="w-5 h-5 text-primary" />
-                주요 유입 경로 (Top Referers)
-              </h2>
-              <div className="space-y-4">
-                {stats?.topReferers?.map(([domain, count]: any) => (
-                  <div key={domain} className="flex items-center gap-4">
-                    <div className="flex-grow">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="font-medium text-gray-700">{domain === 'null' ? '직접 유입 / 북마크' : domain}</span>
-                        <span className="text-gray-400">{count} visits</span>
-                      </div>
-                      <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                        <div 
-                          className="bg-primary h-full rounded-full transition-all duration-1000"
-                          style={{ width: `${Math.min(100, (count / (stats.totalVisits || 1)) * 100)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
-
-          <div className="space-y-8">
-            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-primary" />
-                인기 페이지 (Page Views)
-              </h2>
-              <div className="space-y-6">
-                {Object.entries(stats?.pageViews || {})
-                  .sort((a: any, b: any) => b[1] - a[1])
-                  .slice(0, 15)
-                  .map(([path, count]: any) => (
-                    <div key={path} className="flex items-center justify-between group">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 flex items-center justify-center bg-secondary rounded-lg text-point-green font-bold text-xs">
-                          {count}
-                        </div>
-                        <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors truncate max-w-[180px]">{path}</span>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-300" />
-                    </div>
-                  ))}
-              </div>
-            </section>
-          </div>
-        </div>
-      </div>
-
+      {/* Detail Modal */}
       {selectedInquiry && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
-          onClick={() => setSelectedInquiry(null)}
-        >
-          <div 
-            className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="bg-primary p-6 text-white flex justify-between items-center">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <MessageSquare className="w-5 h-5" />
-                상담 신청 상세 정보
-              </h3>
-              <button 
-                onClick={() => setSelectedInquiry(null)}
-                className="hover:bg-white/20 p-2 rounded-full transition-all"
-              >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-            <div className="p-8 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-2xl">
-                  <p className="text-xs text-gray-400 mb-1">신청자 성함</p>
-                  <p className="font-bold text-gray-900">{selectedInquiry.name}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-2xl">
-                  <p className="text-xs text-gray-400 mb-1">진료 분야</p>
-                  <p className="font-bold text-point-green">{selectedInquiry.category}</p>
-                </div>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-2xl">
-                <p className="text-xs text-gray-400 mb-1">연락처</p>
-                <p className="font-bold text-gray-900 text-lg">{selectedInquiry.phone}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 mb-2 px-1">문의 내용</p>
-                <div className="bg-gray-50 p-6 rounded-2xl text-gray-700 leading-relaxed whitespace-pre-wrap min-h-[150px] max-h-[300px] overflow-y-auto">
-                  {selectedInquiry.message || "입력된 내용이 없습니다."}
-                </div>
-              </div>
-              <div className="text-right text-[10px] text-gray-400 italic">
-                신청 일시: {new Date(selectedInquiry.timestamp).toLocaleString('ko-KR')}
-              </div>
-              <button 
-                onClick={() => setSelectedInquiry(null)}
-                className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all"
-              >
-                확인 완료
-              </button>
-            </div>
-          </div>
-        </div>
+        <InquiryModal inquiry={selectedInquiry} onClose={() => setSelectedInquiry(null)} />
       )}
     </div>
   );
 }
 
-function StatCard({ title, value, icon, color }: any) {
+// --- Sub Views ---
+
+function DashboardView({ stats, onTabChange }: any) {
+  return (
+    <div className="space-y-8">
+      {/* Quick Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard title="오늘의 방문자" value={stats?.stats7d?.total / 7 || 0} unit="명" icon={<Users className="text-blue-500" />} color="bg-blue-50" />
+        <StatCard title="최근 7일 방문" value={stats?.stats7d?.total || 0} unit="명" icon={<Calendar className="text-green-500" />} color="bg-green-50" />
+        <StatCard title="안 읽은 상담" value={stats?.unreadInquiries || 0} unit="건" icon={<Mail className="text-red-500" />} color="bg-red-50" />
+        <StatCard title="전체 상담" value={stats?.recentInquiries?.length || 0} unit="건" icon={<MessageSquare className="text-orange-500" />} color="bg-orange-50" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Recent Inquiries Snippet */}
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold flex items-center gap-2"><ClipboardList size={20} className="text-primary" /> 최근 문의</h3>
+            <button onClick={() => onTabChange("inquiries")} className="text-xs text-gray-400 hover:text-primary">전체보기 +</button>
+          </div>
+          <div className="space-y-4">
+            {stats?.recentInquiries?.slice(0, 5).map((inq: any) => (
+              <div key={inq.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-secondary transition-colors cursor-pointer" onClick={() => onTabChange("inquiries")}>
+                <div>
+                  <p className="font-bold text-gray-900 text-sm">{inq.name}</p>
+                  <p className="text-xs text-gray-500">{inq.category}</p>
+                </div>
+                {!inq.is_read && <span className="w-2 h-2 rounded-full bg-red-500"></span>}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Popular Pages Snippet */}
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold flex items-center gap-2"><TrendingUp size={20} className="text-primary" /> 인기 페이지</h3>
+            <button onClick={() => onTabChange("stats")} className="text-xs text-gray-400 hover:text-primary">자세히보기 +</button>
+          </div>
+          <div className="space-y-3">
+            {Object.entries(stats?.pageViews || {}).sort((a: any, b: any) => b[1] - a[1]).slice(0, 5).map(([path, count]: any) => (
+              <div key={path} className="flex justify-between items-center p-2">
+                <span className="text-sm text-gray-600 truncate max-w-[200px]">{path}</span>
+                <span className="text-sm font-bold text-primary">{count} views</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function StatsDetailView({ stats }: any) {
+  return (
+    <div className="space-y-8">
+      {/* Comparison Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <StatsPeriodCard title="전체 기록" total={stats?.totalVisits} human={stats?.humanVisits} bot={stats?.botVisits} />
+        <StatsPeriodCard title="최근 30일" total={stats?.stats30d?.total} human={stats?.stats30d?.human} bot={stats?.stats30d?.bot} />
+        <StatsPeriodCard title="최근 7일" total={stats?.stats7d?.total} human={stats?.stats7d?.human} bot={stats?.stats7d?.bot} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Top Referers */}
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-lg font-bold mb-6 flex items-center gap-2"><ExternalLink size={20} className="text-primary" /> 유입 경로 순위</h3>
+          <div className="space-y-4">
+            {stats?.topReferers?.map(([domain, count]: any) => (
+              <div key={domain} className="space-y-1">
+                <div className="flex justify-between text-xs font-medium">
+                  <span className="text-gray-700">{domain === 'null' ? '직접유입' : domain}</span>
+                  <span className="text-gray-400">{count}</span>
+                </div>
+                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                  <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${(count / stats.totalVisits) * 100}%` }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Detailed Page Views */}
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-lg font-bold mb-6 flex items-center gap-2"><Clock size={20} className="text-primary" /> 페이지별 상세 조회</h3>
+          <div className="space-y-4">
+            {Object.entries(stats?.pageViews || {}).sort((a: any, b: any) => b[1] - a[1]).map(([path, count]: any) => (
+              <div key={path} className="flex justify-between items-center border-b border-gray-50 pb-2">
+                <span className="text-sm text-gray-600">{path}</span>
+                <span className="text-sm font-bold text-gray-900">{count.toLocaleString()} <span className="text-[10px] text-gray-400 font-normal ml-1">뷰</span></span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function InquiryListView({ stats, onView }: any) {
+  return (
+    <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+        <h3 className="font-bold text-gray-900 flex items-center gap-2"><ClipboardList size={18} /> 상담 신청 리스트</h3>
+        <span className="text-xs text-gray-400">총 {stats?.recentInquiries?.length || 0}건</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="text-[12px] uppercase tracking-wider text-gray-400 border-b border-gray-50">
+              <th className="px-6 py-4 font-semibold">상태</th>
+              <th className="px-6 py-4 font-semibold">이름</th>
+              <th className="px-6 py-4 font-semibold">진료분야</th>
+              <th className="px-6 py-4 font-semibold">연락처</th>
+              <th className="px-6 py-4 font-semibold">신청일</th>
+              <th className="px-6 py-4 font-semibold text-right">관리</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {stats?.recentInquiries?.map((inq: any) => (
+              <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-primary/5' : ''}`}>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>
+                    {!inq.is_read ? "NEW" : "읽음"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 font-bold text-gray-900">{inq.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{inq.category}</td>
+                <td className="px-6 py-4 text-sm text-gray-500 font-mono">{inq.phone}</td>
+                <td className="px-6 py-4 text-xs text-gray-400">{new Date(inq.timestamp).toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-right">
+                  <button onClick={() => onView(inq)} className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition-all">상세보기</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+// --- Common Components ---
+
+function SidebarLink({ icon, label, active, onClick }: any) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all text-sm font-medium ${active ? 'bg-primary text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+    >
+      {icon} {label}
+    </button>
+  );
+}
+
+function StatCard({ title, value, unit, icon, color }: any) {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-      <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-2xl`}>
-        {icon}
-      </div>
+      <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-2xl`}>{icon}</div>
       <div>
-        <p className="text-sm text-gray-500 font-medium">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value.toLocaleString()}</p>
+        <p className="text-xs text-gray-500 font-medium mb-1">{title}</p>
+        <p className="text-2xl font-bold text-gray-900">{Math.round(value).toLocaleString()}<span className="text-sm font-normal text-gray-400 ml-1">{unit}</span></p>
+      </div>
+    </div>
+  );
+}
+
+function StatsPeriodCard({ title, total, human, bot }: any) {
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <h4 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-4">{title}</h4>
+      <div className="space-y-4">
+        <div className="flex justify-between items-end">
+          <span className="text-sm text-gray-600">총 방문</span>
+          <span className="text-2xl font-black text-gray-900">{total?.toLocaleString()}</span>
+        </div>
+        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-50">
+          <div>
+            <p className="text-[10px] text-gray-400 mb-1">실제 사람</p>
+            <p className="text-sm font-bold text-green-600">{human?.toLocaleString()}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-400 mb-1">AI/검색봇</p>
+            <p className="text-sm font-bold text-purple-600">{bot?.toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InquiryModal({ inquiry, onClose }: any) {
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-primary p-6 text-white flex justify-between items-center">
+          <h3 className="text-xl font-bold flex items-center gap-2"><MessageSquare size={20} /> 문의 상세 내용</h3>
+          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full"><RotateCw className="rotate-45" /></button>
+        </div>
+        <div className="p-8 space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-2xl">
+              <p className="text-xs text-gray-400 mb-1">성함</p>
+              <p className="font-bold text-gray-900">{inquiry.name}</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-2xl">
+              <p className="text-xs text-gray-400 mb-1">진료분야</p>
+              <p className="font-bold text-primary">{inquiry.category}</p>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-2xl">
+            <p className="text-xs text-gray-400 mb-1">연락처</p>
+            <p className="font-bold text-gray-900 text-lg">{inquiry.phone}</p>
+          </div>
+          <div className="bg-gray-50 p-6 rounded-2xl text-gray-700 leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto">
+            {inquiry.message || "내용이 없습니다."}
+          </div>
+          <button onClick={onClose} className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all">확인</button>
+        </div>
       </div>
     </div>
   );

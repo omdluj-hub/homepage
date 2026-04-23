@@ -11,15 +11,29 @@ const QuickInquiry = () => {
     privacy: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.privacy) {
       alert("개인정보 수집 및 이용에 동의해주세요.");
       return;
     }
-    console.log("Form submitted:", formData);
-    alert("상담 신청이 완료되었습니다. 곧 연락드리겠습니다!");
-    setFormData({ name: "", phone: "", category: "다이어트", message: "", privacy: false });
+    
+    try {
+      const response = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.ok) {
+        alert("상담 신청이 완료되었습니다. 곧 연락드리겠습니다!");
+        setFormData({ name: "", phone: "", category: "다이어트", message: "", privacy: false });
+      } else {
+        alert("신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      }
+    } catch (e) {
+      alert("신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    }
   };
 
   return (

@@ -37,6 +37,11 @@ export default function RootLayout({
         <Footer />
         <FloatingBanner />
         <FloatingButtons />
+        <AnalyticsTracker />
+      </body>
+    </html>
+  );
+}
       </body>
     </html>
   );

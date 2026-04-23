@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   verification: {
-    google: 'YOUR_GOOGLE_VERIFICATION_CODE', // 구글에서 받은 코드를 여기에 넣으세요
+    google: 'w5NQ-WHd-o_hcKnF8bJoc-WAOklZtZcNapkaNAwDm6A',
   },
 };
 

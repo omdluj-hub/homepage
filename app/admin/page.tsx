@@ -20,7 +20,9 @@ import {
   LogOut,
   Trash2,
   CheckSquare,
-  Square
+  Square,
+  Activity,
+  Globe
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -32,7 +34,7 @@ export default function AdminDashboard() {
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedIds, setSelectedIds] = useState<string[]>([]); // 삭제용 선택 ID 리스트
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && localStorage.getItem("admin_auth") === "true") {
@@ -92,7 +94,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // 선택 항목 삭제 처리
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
     if (!confirm(`선택한 ${selectedIds.length}개의 문의를 삭제하시겠습니까?`)) return;
@@ -218,75 +219,6 @@ export default function AdminDashboard() {
 
 // --- Sub Views ---
 
-function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
-  const toggleSelectAll = () => {
-    if (selectedIds.length === stats?.recentInquiries?.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(stats?.recentInquiries?.map((inq: any) => inq.id) || []);
-    }
-  };
-
-  const toggleSelect = (id: string) => {
-    if (selectedIds.includes(id)) {
-      setSelectedIds(selectedIds.filter((sid: string) => sid !== id));
-    } else {
-      setSelectedIds([...selectedIds, id]);
-    }
-  };
-
-  return (
-    <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
-        <h3 className="font-bold text-gray-900 flex items-center gap-2"><ClipboardList size={18} /> 상담 신청 리스트</h3>
-        <span className="text-xs text-gray-400">총 {stats?.recentInquiries?.length || 0}건</span>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="text-[12px] uppercase tracking-wider text-gray-400 border-b border-gray-50">
-              <th className="px-6 py-4">
-                <button onClick={toggleSelectAll} className="text-gray-300 hover:text-primary transition-colors">
-                  {selectedIds.length > 0 && selectedIds.length === stats?.recentInquiries?.length ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}
-                </button>
-              </th>
-              <th className="px-6 py-4 font-semibold">상태</th>
-              <th className="px-6 py-4 font-semibold">이름</th>
-              <th className="px-6 py-4 font-semibold">진료분야</th>
-              <th className="px-6 py-4 font-semibold">연락처</th>
-              <th className="px-6 py-4 font-semibold">신청일</th>
-              <th className="px-6 py-4 font-semibold text-right">관리</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {stats?.recentInquiries?.map((inq: any) => (
-              <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-primary/5' : ''} ${selectedIds.includes(inq.id) ? 'bg-blue-50/50' : ''}`}>
-                <td className="px-6 py-4">
-                  <button onClick={() => toggleSelect(inq.id)} className="text-gray-300 hover:text-primary transition-colors">
-                    {selectedIds.includes(inq.id) ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}
-                  </button>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>
-                    {!inq.is_read ? "NEW" : "읽음"}
-                  </span>
-                </td>
-                <td className="px-6 py-4 font-bold text-gray-900">{inq.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{inq.category}</td>
-                <td className="px-6 py-4 text-sm text-gray-500 font-mono">{inq.phone}</td>
-                <td className="px-6 py-4 text-xs text-gray-400">{new Date(inq.timestamp).toLocaleDateString()}</td>
-                <td className="px-6 py-4 text-right">
-                  <button onClick={() => onView(inq)} className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition-all shadow-sm">상세보기</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
 function DashboardView({ stats, onTabChange }: any) {
   return (
     <div className="space-y-8">
@@ -332,12 +264,13 @@ function DashboardView({ stats, onTabChange }: any) {
 
 function StatsDetailView({ stats }: any) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <StatsPeriodCard title="전체 기록" total={stats?.totalVisits} human={stats?.humanVisits} bot={stats?.botVisits} />
         <StatsPeriodCard title="최근 30일" total={stats?.stats30d?.total} human={stats?.stats30d?.human} bot={stats?.stats30d?.bot} />
         <StatsPeriodCard title="최근 7일" total={stats?.stats7d?.total} human={stats?.stats7d?.human} bot={stats?.stats7d?.bot} />
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2"><ExternalLink size={20} className="text-primary" /> 유입 경로 순위</h3>
@@ -359,7 +292,119 @@ function StatsDetailView({ stats }: any) {
           </div>
         </section>
       </div>
+
+      {/* 실시간 상세 방문 기록 섹션 추가 */}
+      <section className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mt-8">
+        <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <Activity size={24} className="text-primary" /> 실시간 방문 상세 기록
+            </h3>
+            <p className="text-sm text-gray-400 mt-1">최근 50건의 접속 정보를 표시합니다.</p>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="text-[11px] uppercase tracking-wider text-gray-400 border-b border-gray-100 bg-white">
+                <th className="px-8 py-5 font-bold">시간</th>
+                <th className="px-8 py-5 font-bold">방문 페이지</th>
+                <th className="px-8 py-5 font-bold">유입 경로</th>
+                <th className="px-8 py-5 font-bold">IP 주소</th>
+                <th className="px-8 py-5 font-bold text-right">구분</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {stats?.recentRawVisits?.map((visit: any) => (
+                <tr key={visit.id} className="hover:bg-gray-50 transition-colors group">
+                  <td className="px-8 py-5 whitespace-nowrap">
+                    <span className="text-xs text-gray-400 font-mono">
+                      {new Date(visit.timestamp).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-gray-700">{visit.path}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <span className="text-xs text-gray-500 truncate max-w-[200px] inline-block" title={visit.referer}>
+                      {visit.referer === 'null' || visit.referer === 'Direct' ? '직접 유입' : visit.referer}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2">
+                      <Globe size={14} className="text-gray-300" />
+                      <span className="text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded-md">{visit.ip}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5 text-right">
+                    {visit.isBot ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">BOT</span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">USER</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
+  );
+}
+
+function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
+  const toggleSelectAll = () => {
+    if (selectedIds.length === stats?.recentInquiries?.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(stats?.recentInquiries?.map((inq: any) => inq.id) || []);
+    }
+  };
+  const toggleSelect = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter((sid: string) => sid !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+  return (
+    <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+        <h3 className="font-bold text-gray-900 flex items-center gap-2"><ClipboardList size={18} /> 상담 신청 리스트</h3>
+        <span className="text-xs text-gray-400">총 {stats?.recentInquiries?.length || 0}건</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="text-[12px] uppercase tracking-wider text-gray-400 border-b border-gray-50">
+              <th className="px-6 py-4"><button onClick={toggleSelectAll} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.length > 0 && selectedIds.length === stats?.recentInquiries?.length ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></th>
+              <th className="px-6 py-4 font-semibold">상태</th>
+              <th className="px-6 py-4 font-semibold">이름</th>
+              <th className="px-6 py-4 font-semibold">진료분야</th>
+              <th className="px-6 py-4 font-semibold">연락처</th>
+              <th className="px-6 py-4 font-semibold">신청일</th>
+              <th className="px-6 py-4 font-semibold text-right">관리</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {stats?.recentInquiries?.map((inq: any) => (
+              <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-primary/5' : ''} ${selectedIds.includes(inq.id) ? 'bg-blue-50/50' : ''}`}>
+                <td className="px-6 py-4"><button onClick={() => toggleSelect(inq.id)} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.includes(inq.id) ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></td>
+                <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>{!inq.is_read ? "NEW" : "읽음"}</span></td>
+                <td className="px-6 py-4 font-bold text-gray-900">{inq.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{inq.category}</td>
+                <td className="px-6 py-4 text-sm text-gray-500 font-mono">{inq.phone}</td>
+                <td className="px-6 py-4 text-xs text-gray-400">{new Date(inq.timestamp).toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-right"><button onClick={() => onView(inq)} className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition-all shadow-sm">상세보기</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 

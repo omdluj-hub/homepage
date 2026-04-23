@@ -7,16 +7,16 @@ export async function GET() {
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    // 1. 전체 방문자 및 최근 기록
+    // 1. 전체 방문자 (통계 분석용)
     const { data: visits, error: vError } = await supabase
       .from('visits')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(2000); // 분석을 위해 충분한 데이터 로드
+      .limit(2000);
 
     if (vError) throw vError;
 
-    // 2. 상담 신청 기록 (최근 50개)
+    // 2. 상담 신청 기록
     const { data: inquiries, error: iError } = await supabase
       .from('inquiries')
       .select('*')
@@ -25,12 +25,11 @@ export async function GET() {
 
     if (iError) throw iError;
 
-    // 3. 통계 계산 로직
+    // 3. 통계 계산
     const totalVisits = visits.length;
     const botVisits = visits.filter((v: any) => v.is_bot).length;
     const humanVisits = totalVisits - botVisits;
 
-    // 최근 7일/30일 통계
     const last7Days = visits.filter((v: any) => v.created_at >= sevenDaysAgo);
     const last30Days = visits.filter((v: any) => v.created_at >= thirtyDaysAgo);
 
@@ -46,7 +45,6 @@ export async function GET() {
       bot: last30Days.filter((v: any) => v.is_bot).length
     };
 
-    // 페이지별/유입경로별 통계 (전체 기준)
     const pageViews: any = {};
     const referers: any = {};
     visits.forEach((v: any) => {
@@ -54,6 +52,16 @@ export async function GET() {
       const ref = v.referer.split('/')[2] || v.referer;
       referers[ref] = (referers[ref] || 0) + 1;
     });
+
+    // 4. 최근 상세 방문 기록 (50건)
+    const recentRawVisits = visits.slice(0, 50).map((v: any) => ({
+      id: v.id,
+      path: v.path,
+      referer: v.referer,
+      ip: v.ip || 'Unknown',
+      isBot: v.is_bot,
+      timestamp: v.created_at
+    }));
 
     const stats = {
       totalVisits,
@@ -63,6 +71,7 @@ export async function GET() {
       stats7d,
       stats30d,
       pageViews,
+      recentRawVisits, // 추가됨
       topReferers: Object.entries(referers)
         .sort((a: any, b: any) => b[1] - a[1])
         .slice(0, 15),

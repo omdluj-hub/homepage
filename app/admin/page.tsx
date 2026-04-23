@@ -198,6 +198,7 @@ export default function AdminDashboard() {
         {activeTab === "dashboard" && <DashboardView stats={stats} onTabChange={setActiveTab} />}
         {activeTab === "stats" && <StatsDetailView stats={stats} />}
         {activeTab === "inquiries" && <InquiryListView stats={stats} onView={handleViewInquiry} />}
+        </div>
       </main>
 
       {/* Detail Modal */}
@@ -426,6 +427,11 @@ function InquiryModal({ inquiry, onClose }: any) {
             {inquiry.message || "내용이 없습니다."}
           </div>
           <button onClick={onClose} className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all">확인</button>
+        </div>
+      </div>
+    </div>
+  );
+}
         </div>
       </div>
     </div>

@@ -3,7 +3,6 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET() {
   try {
-    // 1. Fetch Visits (최근 1000개)
     const { data: visits, error: vError } = await supabase
       .from('visits')
       .select('*')
@@ -12,7 +11,6 @@ export async function GET() {
 
     if (vError) throw vError;
 
-    // 2. Fetch Inquiries
     const { data: inquiries, error: iError } = await supabase
       .from('inquiries')
       .select('*')
@@ -21,7 +19,6 @@ export async function GET() {
 
     if (iError) throw iError;
 
-    // 3. Process Stats
     const totalVisits = visits.length;
     const botVisits = visits.filter((v: any) => v.is_bot).length;
     const humanVisits = totalVisits - botVisits;
@@ -30,9 +27,7 @@ export async function GET() {
     const referers: any = {};
 
     visits.forEach((v: any) => {
-      // Page Views
       pageViews[v.path] = (pageViews[v.path] || 0) + 1;
-      // Referers
       const ref = v.referer.split('/')[2] || v.referer;
       referers[ref] = (referers[ref] || 0) + 1;
     });
@@ -41,6 +36,7 @@ export async function GET() {
       totalVisits,
       botVisits,
       humanVisits,
+      unreadInquiries: inquiries.filter((inq: any) => !inq.is_read).length, // 안 읽은 상담 개수
       pageViews,
       topReferers: Object.entries(referers)
         .sort((a: any, b: any) => b[1] - a[1])
@@ -51,13 +47,14 @@ export async function GET() {
         phone: inq.phone,
         category: inq.category,
         message: inq.message,
+        is_read: inq.is_read, // 읽음 상태 추가
         timestamp: inq.created_at
       }))
     };
 
     return NextResponse.json(stats);
-  } catch (e) {
+  } catch (e: any) {
     console.error('Stats Error:', e);
-    return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

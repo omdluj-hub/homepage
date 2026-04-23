@@ -10,7 +10,8 @@ import {
   ChevronRight,
   TrendingUp,
   Clock,
-  Lock
+  Lock,
+  Mail
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -22,7 +23,6 @@ export default function AdminDashboard() {
   const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
 
   useEffect(() => {
-    // Check if already authenticated
     if (typeof window !== "undefined" && localStorage.getItem("admin_auth") === "true") {
       setIsAuthenticated(true);
       fetchStats();
@@ -59,6 +59,25 @@ export default function AdminDashboard() {
       console.error("Failed to fetch stats");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 내용보기 클릭 시 읽음 처리
+  const handleViewInquiry = async (inq: any) => {
+    setSelectedInquiry(inq);
+    
+    // 이미 읽은 상태가 아니라면 업데이트 수행
+    if (!inq.is_read) {
+      try {
+        await fetch("/api/inquiry", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: inq.id, is_read: true })
+        });
+        fetchStats(); // 통계 개수 즉시 갱신
+      } catch (e) {
+        console.error("Failed to update read status");
+      }
     }
   };
 
@@ -129,18 +148,13 @@ export default function AdminDashboard() {
           </button>
         </header>
 
+        {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <StatCard 
-            title="총 방문자 (최근 1000건)" 
+            title="총 방문자" 
             value={stats?.totalVisits || 0} 
             icon={<Users className="text-blue-500" />} 
             color="bg-blue-50"
-          />
-          <StatCard 
-            title="사람 방문" 
-            value={stats?.humanVisits || 0} 
-            icon={<MousePointer2 className="text-green-500" />} 
-            color="bg-green-50"
           />
           <StatCard 
             title="AI/검색봇 방문" 
@@ -149,7 +163,13 @@ export default function AdminDashboard() {
             color="bg-purple-50"
           />
           <StatCard 
-            title="최근 상담 신청" 
+            title="안 읽은 상담" 
+            value={stats?.unreadInquiries || 0} 
+            icon={<Mail className={stats?.unreadInquiries > 0 ? "text-red-500 animate-pulse" : "text-gray-400"} />} 
+            color={stats?.unreadInquiries > 0 ? "bg-red-50" : "bg-gray-50"}
+          />
+          <StatCard 
+            title="총 상담 신청" 
             value={stats?.recentInquiries?.length || 0} 
             icon={<MessageSquare className="text-orange-500" />} 
             color="bg-orange-50"
@@ -169,6 +189,7 @@ export default function AdminDashboard() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-gray-50 text-gray-500 text-sm">
+                      <th className="px-6 py-4 font-semibold">상태</th>
                       <th className="px-6 py-4 font-semibold">날짜</th>
                       <th className="px-6 py-4 font-semibold">이름</th>
                       <th className="px-6 py-4 font-semibold">연락처</th>
@@ -178,7 +199,14 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {stats?.recentInquiries?.map((inq: any) => (
-                      <tr key={inq.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-red-50/30' : ''}`}>
+                        <td className="px-6 py-4">
+                          {!inq.is_read ? (
+                            <span className="flex h-2 w-2 rounded-full bg-red-500"></span>
+                          ) : (
+                            <span className="flex h-2 w-2 rounded-full bg-gray-200"></span>
+                          )}
+                        </td>
                         <td className="px-6 py-4 text-xs text-gray-400">
                           {new Date(inq.timestamp).toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </td>
@@ -191,14 +219,19 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button 
-                            onClick={() => setSelectedInquiry(inq)}
-                            className="text-xs font-bold text-primary hover:underline bg-primary/5 px-3 py-1 rounded-full transition-all"
+                            onClick={() => handleViewInquiry(inq)}
+                            className={`text-xs font-bold px-3 py-1 rounded-full transition-all ${!inq.is_read ? 'bg-primary text-white' : 'text-primary bg-primary/5 hover:underline'}`}
                           >
-                            내용보기
+                            {!inq.is_read ? '읽기' : '내용보기'}
                           </button>
                         </td>
                       </tr>
                     ))}
+                    {(!stats?.recentInquiries || stats.recentInquiries.length === 0) && (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-10 text-center text-gray-400">최근 문의 내역이 없습니다.</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

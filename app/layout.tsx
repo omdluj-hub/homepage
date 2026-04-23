@@ -18,8 +18,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "후한의원 구미점 | 다이어트, 여드름, 입원실",
+  title: {
+    default: "후한의원 구미점 | 다이어트, 여드름, 입원실",
+    template: "%s | 후한의원 구미점"
+  },
   description: "구미 여드름, 피부질환, 다이어트 한약, 교통사고 입원실 운영. 1인실 입원실 365일 운영.",
+  keywords: ["구미한의원", "구미다이어트", "구미여드름", "구미입원실", "구미교통사고", "후한의원"],
+  authors: [{ name: "후한의원 구미점" }],
+  creator: "후한의원 구미점",
+  metadataBase: new URL('https://homepage-five-chi.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: '후한의원 구미점',
+    description: '구미 여드름, 다이어트, 365일 입원실 운영',
+    url: 'https://homepage-five-chi.vercel.app',
+    siteName: '후한의원 구미점',
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  verification: {
+    google: 'YOUR_GOOGLE_VERIFICATION_CODE', // 구글에서 받은 코드를 여기에 넣으세요
+  },
 };
 
 export default function RootLayout({

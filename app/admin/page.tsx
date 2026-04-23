@@ -52,7 +52,8 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch("/api/stats");
+      // 캐시 방지를 위해 타임스탬프 추가
+      const res = await fetch(`/api/stats?t=${Date.now()}`);
       const data = await res.json();
       setStats(data);
     } catch (e) {
@@ -68,15 +69,29 @@ export default function AdminDashboard() {
     
     // 이미 읽은 상태가 아니라면 업데이트 수행
     if (!inq.is_read) {
+      // 1. 화면에서 즉시 상태 변경 (낙관적 업데이트)
+      setStats((prev: any) => ({
+        ...prev,
+        unreadInquiries: Math.max(0, prev.unreadInquiries - 1),
+        recentInquiries: prev.recentInquiries.map((item: any) => 
+          item.id === inq.id ? { ...item, is_read: true } : item
+        )
+      }));
+
       try {
-        await fetch("/api/inquiry", {
+        const response = await fetch("/api/inquiry", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: inq.id, is_read: true })
         });
-        fetchStats(); // 통계 개수 즉시 갱신
+        
+        if (!response.ok) {
+          throw new Error("Failed to update");
+        }
       } catch (e) {
         console.error("Failed to update read status");
+        // 실패 시 다시 데이터를 불러와서 복구
+        fetchStats();
       }
     }
   };

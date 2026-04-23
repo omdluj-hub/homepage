@@ -19,6 +19,7 @@ export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
 
   useEffect(() => {
     // Check if already authenticated
@@ -128,7 +129,6 @@ export default function AdminDashboard() {
           </button>
         </header>
 
-        {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <StatCard 
             title="총 방문자 (최근 1000건)" 
@@ -199,11 +199,6 @@ export default function AdminDashboard() {
                         </td>
                       </tr>
                     ))}
-                    {(!stats?.recentInquiries || stats.recentInquiries.length === 0) && (
-                      <tr>
-                        <td colSpan={5} className="px-6 py-10 text-center text-gray-400">최근 문의 내역이 없습니다.</td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
               </div>
@@ -261,24 +256,24 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
 
-function StatCard({ title, value, icon, color }: any) {
-  return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-      <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-2xl`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-sm text-gray-500 font-medium">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value.toLocaleString()}</p>
-      </div>
-    </div>
-  );
-}
-te/20 p-2 rounded-full transition-all"
+      {selectedInquiry && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+          onClick={() => setSelectedInquiry(null)}
+        >
+          <div 
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-primary p-6 text-white flex justify-between items-center">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                상담 신청 상세 정보
+              </h3>
+              <button 
+                onClick={() => setSelectedInquiry(null)}
+                className="hover:bg-white/20 p-2 rounded-full transition-all"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>

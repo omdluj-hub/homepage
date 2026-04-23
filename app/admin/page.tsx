@@ -194,11 +194,19 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-50">
+              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-primary" />
                   최근 상담 신청 내역
                 </h2>
+                <button 
+                  onClick={fetchStats}
+                  disabled={isRefreshing}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-all group"
+                  title="새로고침"
+                >
+                  <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
+                </button>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">

@@ -306,6 +306,31 @@ function DashboardView({ stats, onTabChange }: any) {
 }
 
 function StatsDetailView({ stats }: any) {
+  const [expandedIp, setExpandedIp] = useState<string | null>(null);
+
+  // 방문 기록 그룹화 (IP 기준)
+  const groupedVisits = stats?.recentRawVisits?.reduce((acc: any, visit: any) => {
+    const ip = visit.ip || '0.0.0.0';
+    if (!acc[ip]) {
+      acc[ip] = {
+        ip: ip,
+        isBot: visit.isBot,
+        referer: visit.referer,
+        lastTimestamp: visit.timestamp,
+        paths: []
+      };
+    }
+    acc[ip].paths.push({
+      path: visit.path,
+      timestamp: visit.timestamp
+    });
+    return acc;
+  }, {});
+
+  const visitorList = groupedVisits ? Object.values(groupedVisits).sort((a: any, b: any) => 
+    new Date(b.lastTimestamp).getTime() - new Date(a.lastTimestamp).getTime()
+  ) : [];
+
   return (
     <div className="space-y-12">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -336,59 +361,85 @@ function StatsDetailView({ stats }: any) {
         </section>
       </div>
 
-      {/* 실시간 상세 방문 기록 섹션 추가 */}
+      {/* 실시간 상세 방문 기록 섹션 (그룹화 버전) */}
       <section className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mt-8">
         <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
           <div>
             <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-              <Activity size={24} className="text-primary" /> 실시간 방문 상세 기록
+              <Activity size={24} className="text-primary" /> 실시간 방문자 세션
             </h3>
-            <p className="text-sm text-gray-400 mt-1">최근 50건의 접속 정보를 표시합니다.</p>
+            <p className="text-sm text-gray-400 mt-1">IP별로 최근 활동을 묶어서 표시합니다.</p>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="text-[11px] uppercase tracking-wider text-gray-400 border-b border-gray-100 bg-white">
-                <th className="px-8 py-5 font-bold">시간</th>
-                <th className="px-8 py-5 font-bold">방문 페이지</th>
-                <th className="px-8 py-5 font-bold">유입 경로</th>
-                <th className="px-8 py-5 font-bold">IP 주소</th>
-                <th className="px-8 py-5 font-bold text-right">구분</th>
+                <th className="px-8 py-5 font-bold">마지막 활동</th>
+                <th className="px-8 py-5 font-bold">IP 주소 / 구분</th>
+                <th className="px-8 py-5 font-bold">방문 페이지수</th>
+                <th className="px-8 py-5 font-bold">최초 유입 경로</th>
+                <th className="px-8 py-5 font-bold text-right">상세 경로</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {stats?.recentRawVisits?.map((visit: any) => (
-                <tr key={visit.id} className="hover:bg-gray-50 transition-colors group">
-                  <td className="px-8 py-5 whitespace-nowrap">
-                    <span className="text-xs text-gray-400 font-mono">
-                      {new Date(visit.timestamp).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                    </span>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-gray-700">{visit.path}</span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <span className="text-xs text-gray-500 truncate max-w-[200px] inline-block" title={visit.referer}>
-                      {visit.referer === 'null' || visit.referer === 'Direct' ? '직접 유입' : visit.referer}
-                    </span>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-2">
-                      <Globe size={14} className="text-gray-300" />
-                      <span className="text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded-md">{visit.ip}</span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5 text-right">
-                    {visit.isBot ? (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">BOT</span>
-                    ) : (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">USER</span>
-                    )}
-                  </td>
-                </tr>
+              {visitorList.map((visitor: any) => (
+                <React.Fragment key={visitor.ip}>
+                  <tr className={`hover:bg-gray-50 transition-colors group ${expandedIp === visitor.ip ? 'bg-blue-50/20' : ''}`}>
+                    <td className="px-8 py-5 whitespace-nowrap">
+                      <span className="text-xs text-gray-400 font-mono">
+                        {new Date(visitor.lastTimestamp).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-gray-700 font-mono bg-gray-100 px-2 py-1 rounded-md">{visitor.ip}</span>
+                        {visitor.isBot ? (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">BOT</span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">USER</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className="text-sm font-bold text-primary bg-primary/5 px-3 py-1 rounded-full">{visitor.paths.length} <span className="text-[10px] font-normal text-gray-400 ml-1">PAGES</span></span>
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className="text-xs text-gray-500 truncate max-w-[150px] inline-block" title={visitor.referer}>
+                        {visitor.referer === 'null' || visitor.referer === 'Direct' ? '직접 유입' : visitor.referer}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <button 
+                        onClick={() => setExpandedIp(expandedIp === visitor.ip ? null : visitor.ip)}
+                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ml-auto ${expandedIp === visitor.ip ? 'bg-primary text-white' : 'text-gray-400 border border-gray-100 hover:border-primary hover:text-primary'}`}
+                      >
+                        {expandedIp === visitor.ip ? '상세 접기' : '상세 보기'}
+                        <ChevronRight size={14} className={`transition-transform ${expandedIp === visitor.ip ? 'rotate-90' : ''}`} />
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedIp === visitor.ip && (
+                    <tr>
+                      <td colSpan={5} className="bg-gray-50/80 px-10 py-6">
+                        <div className="space-y-3 border-l-4 border-primary/30 pl-8 relative">
+                          <div className="absolute -left-[10px] top-0 w-4 h-4 bg-primary rounded-full border-4 border-white"></div>
+                          {visitor.paths.map((p: any, idx: number) => (
+                            <div key={idx} className="flex items-center justify-between group/path">
+                              <div className="flex items-center gap-4">
+                                <span className="text-sm font-bold text-gray-700">{p.path}</span>
+                                {idx === 0 && <span className="text-[10px] bg-gray-200 text-gray-500 px-1.5 rounded font-bold">LATEST</span>}
+                              </div>
+                              <span className="text-xs text-gray-400 font-mono">
+                                {new Date(p.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>

@@ -384,7 +384,7 @@ function StatsDetailView({ stats }: any) {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {visitorList.map((visitor: any) => (
-                <React.Fragment key={visitor.ip}>
+                <Fragment key={visitor.ip}>
                   <tr className={`hover:bg-gray-50 transition-colors group ${expandedIp === visitor.ip ? 'bg-blue-50/20' : ''}`}>
                     <td className="px-8 py-5 whitespace-nowrap">
                       <span className="text-xs text-gray-400 font-mono">
@@ -657,6 +657,10 @@ function InquiryModal({ inquiry, onClose }: any) {
         </div>
       </div>
     </div>
+  );
+}
+
+iv>
   );
 }
 

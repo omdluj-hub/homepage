@@ -170,7 +170,12 @@ export default function AdminDashboard() {
           <SidebarLink icon={<LayoutDashboard size={20} />} label="대시보드" active={activeTab === "dashboard"} onClick={() => setActiveTab("dashboard")} />
           <SidebarLink icon={<BarChart3 size={20} />} label="방문자 통계" active={activeTab === "stats"} onClick={() => setActiveTab("stats")} />
           <SidebarLink icon={<ClipboardList size={20} />} label="상담 신청 관리" active={activeTab === "inquiries"} onClick={() => setActiveTab("inquiries")} />
-          <SidebarLink icon={<Globe size={20} />} label="비대면 상담 관리" active={activeTab === "bbs"} onClick={() => setActiveTab("bbs")} />
+          <SidebarLink 
+            icon={<Globe size={20} />} 
+            label="비대면 상담 관리" 
+            active={false} 
+            onClick={() => window.open("https://bbs-ruddy-iota.vercel.app/admin", "_blank")} 
+          />
         </nav>
         <div className="p-4 border-t border-gray-50">
           <button onClick={handleLogout} className="flex items-center gap-3 w-full p-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all text-sm font-medium"><LogOut size={18} /> 로그아웃</button>

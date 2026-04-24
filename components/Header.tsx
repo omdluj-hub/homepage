@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ExternalLink } from "lucide-react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,6 +58,12 @@ const Header = () => {
         { name: "프리미엄 입원실", href: "/clinic/traffic/room" },
       ]
     },
+    { 
+      name: "이벤트", 
+      href: "https://event-snowy-ten.vercel.app/", 
+      subMenus: [],
+      isExternal: true
+    },
     { name: "상담문의", href: "/contact", subMenus: [] },
   ];
 
@@ -81,22 +88,34 @@ const Header = () => {
                 onMouseEnter={() => setActiveMenu(item.name)}
                 onMouseLeave={() => setActiveMenu(null)}
               >
-                <Link
-                  href={item.href}
-                  className="px-4 py-2 text-gray-700 hover:text-point-green font-medium transition-colors flex items-center gap-1 group"
-                >
-                  {item.name}
-                  {item.subMenus.length > 0 && (
-                    <svg 
-                      className="w-4 h-4 text-gray-400 group-hover:text-point-green transition-transform group-hover:rotate-180" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  )}
-                </Link>
+                {item.isExternal ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 text-primary hover:text-point-green font-bold transition-colors flex items-center gap-1 group"
+                  >
+                    {item.name}
+                    <ExternalLink size={14} className="text-gray-400 group-hover:text-point-green" />
+                  </a>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className="px-4 py-2 text-gray-700 hover:text-point-green font-medium transition-colors flex items-center gap-1 group"
+                  >
+                    {item.name}
+                    {item.subMenus.length > 0 && (
+                      <svg 
+                        className="w-4 h-4 text-gray-400 group-hover:text-point-green transition-transform group-hover:rotate-180" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </Link>
+                )}
                 {item.subMenus.length > 0 && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-white border border-gray-100 shadow-lg rounded-b-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                     {item.subMenus.map((sub) => (
@@ -135,26 +154,40 @@ const Header = () => {
           <div className="px-4 py-4 space-y-1">
             {menuItems.map((item) => (
               <div key={item.name} className="py-2">
-                <Link
-                  href={item.href}
-                  className="block text-lg font-bold text-primary mb-2"
-                  onClick={() => !item.subMenus.length && setIsOpen(false)}
-                >
-                  {item.name}
-                </Link>
-                {item.subMenus.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2 pl-2">
-                    {item.subMenus.map((sub) => (
-                      <Link
-                        key={sub.name}
-                        href={sub.href}
-                        className="text-sm text-gray-600 py-1 hover:text-point-green"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
+                {item.isExternal ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-lg font-bold text-accent mb-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name} <span className="text-xs font-normal text-gray-400 ml-1">(새창)</span>
+                  </a>
+                ) : (
+                  <>
+                    <Link
+                      href={item.href}
+                      className="block text-lg font-bold text-primary mb-2"
+                      onClick={() => !item.subMenus.length && setIsOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                    {item.subMenus.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2 pl-2">
+                        {item.subMenus.map((sub) => (
+                          <Link
+                            key={sub.name}
+                            href={sub.href}
+                            className="text-sm text-gray-600 py-1 hover:text-point-green"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ))}

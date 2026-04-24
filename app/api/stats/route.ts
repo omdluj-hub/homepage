@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 export async function GET() {
   try {
@@ -15,20 +16,25 @@ export async function GET() {
 
     if (vError) throw vError;
 
+    // 1. 홈페이지 상담 데이터 (일반 클라이언트 사용)
     const { data: inquiries, error: iError } = await supabase
       .from('inquiries')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(50);
 
-    // 이벤트 페이지의 reservations 데이터 추가 호출
-    const { data: reservations, error: rError } = await supabase
+    // 2. 이벤트 페이지 데이터 (Service Role 클라이언트 사용 - 가이드 준수)
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: reservations, error: rError } = await adminSupabase
       .from('reservations')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(50);
 
-    // reservations 테이블이 없을 수도 있으므로 에러 처리를 유연하게 함
     const validInquiries = inquiries || [];
     const validReservations = reservations || [];
 

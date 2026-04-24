@@ -465,9 +465,3 @@ function InquiryModal({ inquiry, onClose }: any) {
     </div>
   );
 }
-unded-2xl hover:bg-opacity-90 transition-all">확인</button>
-        </div>
-      </div>
-    </div>
-  );
-}

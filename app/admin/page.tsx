@@ -499,21 +499,67 @@ function StatsPeriodCard({ title, total, human, bot }: any) {
 }
 
 function InquiryModal({ inquiry, onClose }: any) {
+  // 표시하지 않을 내부용 필드 목록
+  const excludeFields = ['id', 'created_at', 'timestamp', 'is_read', 'source'];
+  
+  // 표시할 데이터 항목만 필터링
+  const displayFields = Object.entries(inquiry)
+    .filter(([key]) => !excludeFields.includes(key))
+    .filter(([_, value]) => value !== null && value !== undefined && value !== '');
+
+  // 필드명 한글 매핑 (필요 시 추가)
+  const labelMap: any = {
+    name: '성함',
+    username: '성함',
+    phone: '연락처',
+    tel: '연락처',
+    category: '상담분야/관심항목',
+    subject: '상담제목',
+    message: '상담내용',
+    content: '상담내용',
+    email: '이메일',
+    age: '연령대',
+    gender: '성별',
+    location: '지역',
+    referral: '유입경로'
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <div className="bg-primary p-6 text-white flex justify-between items-center">
-          <h3 className="text-xl font-bold flex items-center gap-2"><MessageSquare size={20} /> 문의 상세 내용</h3>
-          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full transition-all text-white"><svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-        </div>
-        <div className="p-8 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-2xl"><p className="text-xs text-gray-400 mb-1">성함</p><p className="font-bold text-gray-900">{inquiry.name}</p></div>
-            <div className="bg-gray-50 p-4 rounded-2xl"><p className="text-xs text-gray-400 mb-1">진료분야</p><p className="font-bold text-primary">{inquiry.category}</p></div>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200" onClick={(e) => e.stopPropagation()}>
+        <div className={`${inquiry.source === '홈페이지' ? 'bg-primary' : 'bg-orange-500'} p-6 text-white flex justify-between items-center`}>
+          <div>
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <MessageSquare size={20} /> 문의 상세 내용
+            </h3>
+            <p className="text-xs opacity-80 mt-1">{inquiry.source} 유입 • {new Date(inquiry.timestamp).toLocaleString()}</p>
           </div>
-          <div className="bg-gray-50 p-4 rounded-2xl"><p className="text-xs text-gray-400 mb-1">연락처</p><p className="font-bold text-gray-900 text-lg">{inquiry.phone}</p></div>
-          <div className="bg-gray-50 p-6 rounded-2xl text-gray-700 leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto">{inquiry.message || "내용이 없습니다."}</div>
-          <button onClick={onClose} className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all">확인</button>
+          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full transition-all text-white">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        
+        <div className="p-8 max-h-[80vh] overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            {displayFields.map(([key, value]: [string, any]) => {
+              const isLongText = String(value).length > 30;
+              return (
+                <div key={key} className={`bg-gray-50 p-4 rounded-2xl ${isLongText ? 'md:col-span-2' : ''}`}>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">{labelMap[key] || key}</p>
+                  <p className={`text-gray-900 ${isLongText ? 'whitespace-pre-wrap leading-relaxed' : 'font-bold'}`}>
+                    {String(value)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          
+          <button 
+            onClick={onClose} 
+            className={`w-full ${inquiry.source === '홈페이지' ? 'bg-primary' : 'bg-orange-500'} text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all shadow-lg`}
+          >
+            확인 및 닫기
+          </button>
         </div>
       </div>
     </div>

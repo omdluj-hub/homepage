@@ -45,10 +45,10 @@ export async function GET() {
         timestamp: inq.created_at
       })),
       ...validReservations.map((res: any) => ({
-        ...res,
+        ...res, // 모든 원본 필드 유지 (중요)
         source: '이벤트',
         timestamp: res.created_at,
-        // reservations 테이블의 컬럼명이 다를 경우를 대비한 매핑
+        // 리스트 뷰에서 공통으로 보여줄 필드 매핑
         name: res.name || res.username || '이름없음',
         phone: res.phone || res.tel || '',
         category: res.category || res.subject || '이벤트 상담',

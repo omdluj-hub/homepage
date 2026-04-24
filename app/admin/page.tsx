@@ -356,11 +356,20 @@ function StatsDetailView({ stats }: any) {
 }
 
 function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
+  const [subTab, setSubTab] = useState("all"); // all, home, event
+
+  const filteredInquiries = stats?.recentInquiries?.filter((inq: any) => {
+    if (subTab === "all") return true;
+    if (subTab === "home") return inq.source === "홈페이지";
+    if (subTab === "event") return inq.source === "이벤트";
+    return true;
+  }) || [];
+
   const toggleSelectAll = () => {
-    if (selectedIds.length === stats?.recentInquiries?.length) {
+    if (selectedIds.length === filteredInquiries.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(stats?.recentInquiries?.map((inq: any) => inq.id) || []);
+      setSelectedIds(filteredInquiries.map((inq: any) => inq.id) || []);
     }
   };
   const toggleSelect = (id: string) => {
@@ -372,15 +381,37 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
   };
   return (
     <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
-        <h3 className="font-bold text-gray-900 flex items-center gap-2"><ClipboardList size={18} /> 상담 신청 리스트</h3>
-        <span className="text-xs text-gray-400">총 {stats?.recentInquiries?.length || 0}건</span>
+      <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h3 className="font-bold text-gray-900 flex items-center gap-2"><ClipboardList size={18} /> 상담 신청 관리</h3>
+          <p className="text-[11px] text-gray-400 mt-1">유입 경로별로 상담을 확인할 수 있습니다.</p>
+        </div>
+        <div className="flex bg-white p-1 rounded-xl border border-gray-200 shadow-sm">
+          <button 
+            onClick={() => setSubTab("all")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subTab === "all" ? "bg-primary text-white" : "text-gray-400 hover:text-gray-600"}`}
+          >
+            전체 ({stats?.recentInquiries?.length || 0})
+          </button>
+          <button 
+            onClick={() => setSubTab("home")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subTab === "home" ? "bg-blue-500 text-white" : "text-gray-400 hover:text-gray-600"}`}
+          >
+            홈페이지 ({stats?.recentInquiries?.filter((i:any)=>i.source==="홈페이지").length || 0})
+          </button>
+          <button 
+            onClick={() => setSubTab("event")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subTab === "event" ? "bg-orange-500 text-white" : "text-gray-400 hover:text-gray-600"}`}
+          >
+            이벤트 ({stats?.recentInquiries?.filter((i:any)=>i.source==="이벤트").length || 0})
+          </button>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-[12px] uppercase tracking-wider text-gray-400 border-b border-gray-50">
-              <th className="px-6 py-4"><button onClick={toggleSelectAll} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.length > 0 && selectedIds.length === stats?.recentInquiries?.length ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></th>
+              <th className="px-6 py-4"><button onClick={toggleSelectAll} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.length > 0 && selectedIds.length === filteredInquiries.length ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></th>
               <th className="px-6 py-4 font-semibold">출처</th>
               <th className="px-6 py-4 font-semibold">상태</th>
               <th className="px-6 py-4 font-semibold">이름</th>
@@ -391,7 +422,7 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {stats?.recentInquiries?.map((inq: any) => (
+            {filteredInquiries.map((inq: any) => (
               <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-primary/5' : ''} ${selectedIds.includes(inq.id) ? 'bg-blue-50/50' : ''}`}>
                 <td className="px-6 py-4"><button onClick={() => toggleSelect(inq.id)} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.includes(inq.id) ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></td>
                 <td className="px-6 py-4">
@@ -407,6 +438,11 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
                 <td className="px-6 py-4 text-right"><button onClick={() => onView(inq)} className="px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition-all shadow-sm">상세보기</button></td>
               </tr>
             ))}
+            {filteredInquiries.length === 0 && (
+              <tr>
+                <td colSpan={8} className="px-6 py-20 text-center text-gray-400 text-sm">해당 경로의 상담 내역이 없습니다.</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

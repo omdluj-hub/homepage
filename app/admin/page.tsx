@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { 
   Users, 
   Bot, 
@@ -190,7 +190,6 @@ export default function AdminDashboard() {
                 {activeTab === "dashboard" && "통합 대시보드"}
                 {activeTab === "stats" && "상세 방문자 통계"}
                 {activeTab === "inquiries" && "상담 신청 관리"}
-                {activeTab === "bbs" && "비대면 상담 관리"}
               </h2>
               <p className="text-gray-500 text-sm">실시간 데이터 현황입니다.</p>
             </div>
@@ -200,11 +199,9 @@ export default function AdminDashboard() {
                   <Trash2 size={16} /> {selectedIds.length}개 삭제
                 </button>
               )}
-              {activeTab !== "bbs" && (
-                <button onClick={fetchStats} disabled={isRefreshing} className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group">
-                  <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
-                </button>
-              )}
+              <button onClick={fetchStats} disabled={isRefreshing} className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group">
+                <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
+              </button>
             </div>
           </header>
 
@@ -218,44 +215,10 @@ export default function AdminDashboard() {
               setSelectedIds={setSelectedIds} 
             />
           )}
-          {activeTab === "bbs" && <BBSView />}
         </div>
       </main>
 
       {selectedInquiry && <InquiryModal inquiry={selectedInquiry} onClose={() => setSelectedInquiry(null)} />}
-    </div>
-  );
-}
-
-// --- BBS View (Iframe) ---
-function BBSView() {
-  const bbsUrl = "https://bbs-ruddy-iota.vercel.app/admin";
-  
-  return (
-    <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-100 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-          <h4 className="font-bold text-blue-900 text-lg">비대면 상담 게시판 관리</h4>
-          <p className="text-sm text-blue-700 mt-1">보안 정책상 iframe 내 로그인이 제한될 수 있습니다. 원활한 관리를 위해 '새 창' 버튼을 이용해 주세요.</p>
-        </div>
-        <a 
-          href={bbsUrl} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-2xl font-bold shadow-lg hover:bg-blue-600 transition-all whitespace-nowrap"
-        >
-          <ExternalLink size={18} /> 새 창에서 관리자 열기
-        </a>
-      </div>
-      
-      <div className="w-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" style={{ height: 'calc(100vh - 320px)' }}>
-        <iframe 
-          src={bbsUrl} 
-          className="w-full h-full border-none"
-          title="비대면 상담 관리"
-          allow="clipboard-read; clipboard-write"
-        />
-      </div>
     </div>
   );
 }
@@ -280,7 +243,17 @@ function DashboardView({ stats, onTabChange }: any) {
           <div className="space-y-4">
             {stats?.recentInquiries?.slice(0, 5).map((inq: any) => (
               <div key={inq.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-secondary transition-colors cursor-pointer" onClick={() => onTabChange("inquiries")}>
-                <div><p className="font-bold text-gray-900 text-sm">{inq.name}</p><p className="text-xs text-gray-500">{inq.category}</p></div>
+                <div className="flex items-center gap-3">
+                  <div className={`w-1 h-8 rounded-full ${inq.source === '홈페이지' ? 'bg-primary' : 'bg-orange-400'}`}></div>
+                  <div>
+                    <p className="font-bold text-gray-900 text-sm">{inq.name}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-medium text-gray-400">{inq.source}</span>
+                      <span className="text-[10px] text-gray-300">|</span>
+                      <span className="text-[10px] text-gray-500">{inq.category}</span>
+                    </div>
+                  </div>
+                </div>
                 {!inq.is_read && <span className="w-2 h-2 rounded-full bg-red-500"></span>}
               </div>
             ))}
@@ -439,7 +412,7 @@ function StatsDetailView({ stats }: any) {
                       </td>
                     </tr>
                   )}
-                </React.Fragment>
+                </Fragment>
               ))}
             </tbody>
           </table>
@@ -659,8 +632,3 @@ function InquiryModal({ inquiry, onClose }: any) {
     </div>
   );
 }
-
-iv>
-  );
-}
-

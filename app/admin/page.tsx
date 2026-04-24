@@ -227,26 +227,30 @@ function BBSView() {
   const bbsUrl = "https://bbs-ruddy-iota.vercel.app/admin";
   
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
+    <div className="space-y-6">
+      <div className="bg-blue-50 border border-blue-100 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+          <h4 className="font-bold text-blue-900 text-lg">비대면 상담 게시판 관리</h4>
+          <p className="text-sm text-blue-700 mt-1">보안 정책상 iframe 내 로그인이 제한될 수 있습니다. 원활한 관리를 위해 '새 창' 버튼을 이용해 주세요.</p>
+        </div>
         <a 
           href={bbsUrl} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-xl text-xs font-bold shadow-md hover:bg-blue-600 transition-all"
+          className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-2xl font-bold shadow-lg hover:bg-blue-600 transition-all whitespace-nowrap"
         >
-          <ExternalLink size={14} /> 새 창에서 관리자 열기
+          <ExternalLink size={18} /> 새 창에서 관리자 열기
         </a>
       </div>
-      <div className="w-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" style={{ height: 'calc(100vh - 250px)' }}>
+      
+      <div className="w-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" style={{ height: 'calc(100vh - 320px)' }}>
         <iframe 
-          src="/bbs-admin/admin" 
+          src={bbsUrl} 
           className="w-full h-full border-none"
           title="비대면 상담 관리"
           allow="clipboard-read; clipboard-write"
         />
       </div>
-      <p className="text-[11px] text-gray-400 text-center">※ 브라우저 보안 정책으로 인해 iframe 내 로그인이 안 될 경우 상단 '새 창에서 열기'를 이용해 주세요.</p>
     </div>
   );
 }

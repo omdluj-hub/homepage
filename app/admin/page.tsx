@@ -381,6 +381,7 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
           <thead>
             <tr className="text-[12px] uppercase tracking-wider text-gray-400 border-b border-gray-50">
               <th className="px-6 py-4"><button onClick={toggleSelectAll} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.length > 0 && selectedIds.length === stats?.recentInquiries?.length ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></th>
+              <th className="px-6 py-4 font-semibold">출처</th>
               <th className="px-6 py-4 font-semibold">상태</th>
               <th className="px-6 py-4 font-semibold">이름</th>
               <th className="px-6 py-4 font-semibold">진료분야</th>
@@ -393,6 +394,11 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
             {stats?.recentInquiries?.map((inq: any) => (
               <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-primary/5' : ''} ${selectedIds.includes(inq.id) ? 'bg-blue-50/50' : ''}`}>
                 <td className="px-6 py-4"><button onClick={() => toggleSelect(inq.id)} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.includes(inq.id) ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></td>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${inq.source === '홈페이지' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-orange-50 text-orange-600 border border-orange-100'}`}>
+                    {inq.source}
+                  </span>
+                </td>
                 <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>{!inq.is_read ? "NEW" : "읽음"}</span></td>
                 <td className="px-6 py-4 font-bold text-gray-900">{inq.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{inq.category}</td>
@@ -454,6 +460,12 @@ function InquiryModal({ inquiry, onClose }: any) {
           <div className="bg-gray-50 p-4 rounded-2xl"><p className="text-xs text-gray-400 mb-1">연락처</p><p className="font-bold text-gray-900 text-lg">{inquiry.phone}</p></div>
           <div className="bg-gray-50 p-6 rounded-2xl text-gray-700 leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto">{inquiry.message || "내용이 없습니다."}</div>
           <button onClick={onClose} className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:bg-opacity-90 transition-all">확인</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+unded-2xl hover:bg-opacity-90 transition-all">확인</button>
         </div>
       </div>
     </div>

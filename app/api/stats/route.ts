@@ -21,7 +21,34 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (iError) throw iError;
+    // 이벤트 페이지의 reservations 데이터 추가 호출
+    const { data: reservations, error: rError } = await supabase
+      .from('reservations')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    // reservations 테이블이 없을 수도 있으므로 에러 처리를 유연하게 함
+    const validInquiries = inquiries || [];
+    const validReservations = reservations || [];
+
+    const combinedInquiries = [
+      ...validInquiries.map((inq: any) => ({
+        ...inq,
+        source: '홈페이지',
+        timestamp: inq.created_at
+      })),
+      ...validReservations.map((res: any) => ({
+        ...res,
+        source: '이벤트',
+        timestamp: res.created_at,
+        // reservations 테이블의 컬럼명이 다를 경우를 대비한 매핑
+        name: res.name || res.username || '이름없음',
+        phone: res.phone || res.tel || '',
+        category: res.category || res.subject || '이벤트 상담',
+        message: res.message || res.content || ''
+      }))
+    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     const totalVisits = visits.length;
     const botVisits = visits.filter((v: any) => v.is_bot).length;
@@ -54,7 +81,7 @@ export async function GET() {
       id: v.id,
       path: v.path,
       referer: v.referer,
-      ip: v.ip || '0.0.0.0', // Unknown 대신 0.0.0.0으로 표시하여 구별
+      ip: v.ip || '0.0.0.0',
       isBot: v.is_bot,
       timestamp: v.created_at
     }));
@@ -63,21 +90,13 @@ export async function GET() {
       totalVisits,
       botVisits,
       humanVisits,
-      unreadInquiries: inquiries.filter((inq: any) => !inq.is_read).length,
+      unreadInquiries: combinedInquiries.filter((inq: any) => !inq.is_read).length,
       stats7d,
       stats30d,
       pageViews,
       recentRawVisits,
       topReferers: Object.entries(referers).sort((a: any, b: any) => b[1] - a[1]).slice(0, 15),
-      recentInquiries: inquiries.map((inq: any) => ({
-        id: inq.id,
-        name: inq.name,
-        phone: inq.phone,
-        category: inq.category,
-        message: inq.message,
-        is_read: inq.is_read,
-        timestamp: inq.created_at
-      }))
+      recentInquiries: combinedInquiries.slice(0, 50)
     });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

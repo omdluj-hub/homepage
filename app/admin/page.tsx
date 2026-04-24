@@ -224,14 +224,29 @@ export default function AdminDashboard() {
 
 // --- BBS View (Iframe) ---
 function BBSView() {
+  const bbsUrl = "https://bbs-ruddy-iota.vercel.app/admin";
+  
   return (
-    <div className="w-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" style={{ height: 'calc(100vh - 200px)' }}>
-      <iframe 
-        src="https://bbs-ruddy-iota.vercel.app/admin" 
-        className="w-full h-full border-none"
-        title="비대면 상담 관리"
-        allow="clipboard-read; clipboard-write"
-      />
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <a 
+          href={bbsUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-xl text-xs font-bold shadow-md hover:bg-blue-600 transition-all"
+        >
+          <ExternalLink size={14} /> 새 창에서 관리자 열기
+        </a>
+      </div>
+      <div className="w-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" style={{ height: 'calc(100vh - 250px)' }}>
+        <iframe 
+          src="/bbs-admin/admin" 
+          className="w-full h-full border-none"
+          title="비대면 상담 관리"
+          allow="clipboard-read; clipboard-write"
+        />
+      </div>
+      <p className="text-[11px] text-gray-400 text-center">※ 브라우저 보안 정책으로 인해 iframe 내 로그인이 안 될 경우 상단 '새 창에서 열기'를 이용해 주세요.</p>
     </div>
   );
 }

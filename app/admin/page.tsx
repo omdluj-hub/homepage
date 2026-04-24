@@ -184,6 +184,7 @@ export default function AdminDashboard() {
                 {activeTab === "dashboard" && "통합 대시보드"}
                 {activeTab === "stats" && "상세 방문자 통계"}
                 {activeTab === "inquiries" && "상담 신청 관리"}
+                {activeTab === "bbs" && "비대면 상담 관리"}
               </h2>
               <p className="text-gray-500 text-sm">실시간 데이터 현황입니다.</p>
             </div>
@@ -193,9 +194,11 @@ export default function AdminDashboard() {
                   <Trash2 size={16} /> {selectedIds.length}개 삭제
                 </button>
               )}
-              <button onClick={fetchStats} disabled={isRefreshing} className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group">
-                <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
-              </button>
+              {activeTab !== "bbs" && (
+                <button onClick={fetchStats} disabled={isRefreshing} className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-all group">
+                  <RotateCw className={`w-5 h-5 text-gray-400 group-hover:text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
+                </button>
+              )}
             </div>
           </header>
 
@@ -209,10 +212,25 @@ export default function AdminDashboard() {
               setSelectedIds={setSelectedIds} 
             />
           )}
+          {activeTab === "bbs" && <BBSView />}
         </div>
       </main>
 
       {selectedInquiry && <InquiryModal inquiry={selectedInquiry} onClose={() => setSelectedInquiry(null)} />}
+    </div>
+  );
+}
+
+// --- BBS View (Iframe) ---
+function BBSView() {
+  return (
+    <div className="w-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" style={{ height: 'calc(100vh - 200px)' }}>
+      <iframe 
+        src="https://bbs-ruddy-iota.vercel.app/admin" 
+        className="w-full h-full border-none"
+        title="비대면 상담 관리"
+        allow="clipboard-read; clipboard-write"
+      />
     </div>
   );
 }

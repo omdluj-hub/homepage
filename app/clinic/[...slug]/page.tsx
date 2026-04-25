@@ -354,14 +354,15 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
 
       {/* Clinic Header */}
       <section className="bg-black py-40 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 z-0"></div>
         <div className="max-w-[1440px] mx-auto px-6 text-center relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-gray-500 mb-8">
+          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">
             Treatment Program
           </span>
-          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-white">
+          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
             {data.title}
           </h1>
-          <p className="text-xl md:text-2xl max-w-2xl mx-auto font-light leading-relaxed text-gray-400 break-keep">
+          <p className="text-xl md:text-2xl max-w-2xl mx-auto font-light leading-relaxed text-gray-300 break-keep drop-shadow-md">
             {data.subtitle}
           </p>
         </div>

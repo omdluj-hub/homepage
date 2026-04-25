@@ -181,7 +181,7 @@ const CLINIC_DATA: Record<string, any> = {
       { title: "전화 진료 시스템", desc: "상세 문진표 작성 후 진행되는 심도 있는 상담" },
       { title: "안전 비대면 처방", desc: "병원에 오지 않아도 동일한 수준의 맞춤 한약 제공" }
     ],
-    cta: { title: "비대면 상담 신청하기", href: "/event" }
+    cta: { title: "비대면 상담 신청하기", href: "https://bbs-ruddy-iota.vercel.app/diet" }
   },
 
   // 교통사고

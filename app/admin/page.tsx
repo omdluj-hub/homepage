@@ -85,7 +85,7 @@ export default function AdminDashboard() {
         await fetch("/api/inquiry", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: inq.id, is_read: true })
+          body: JSON.stringify({ id: inq.id, is_read: true, source: inq.source })
         });
       } catch (e) {
         console.error("Failed to update read status");
@@ -172,9 +172,9 @@ export default function AdminDashboard() {
           <SidebarLink icon={<ClipboardList size={20} />} label="상담 신청 관리" active={activeTab === "inquiries"} onClick={() => setActiveTab("inquiries")} />
           <SidebarLink 
             icon={<Globe size={20} />} 
-            label="비대면 상담 관리 (새창)" 
-            active={false} 
-            onClick={() => window.open("https://bbs-ruddy-iota.vercel.app/admin", "_blank")} 
+            label="비대면 상담 관리" 
+            active={activeTab === "remote-diet"} 
+            onClick={() => setActiveTab("remote-diet")} 
           />
         </nav>
         <div className="p-4 border-t border-gray-50">
@@ -190,6 +190,7 @@ export default function AdminDashboard() {
                 {activeTab === "dashboard" && "통합 대시보드"}
                 {activeTab === "stats" && "상세 방문자 통계"}
                 {activeTab === "inquiries" && "상담 신청 관리"}
+                {activeTab === "remote-diet" && "비대면 상담 관리 (내부)"}
               </h2>
               <p className="text-gray-500 text-sm">실시간 데이터 현황입니다.</p>
             </div>
@@ -214,6 +215,15 @@ export default function AdminDashboard() {
               selectedIds={selectedIds} 
               setSelectedIds={setSelectedIds} 
             />
+          )}
+          {activeTab === "remote-diet" && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" style={{ height: '700px' }}>
+              <iframe 
+                src="https://bbs-ruddy-iota.vercel.app/admin" 
+                className="w-full h-full border-none"
+                title="비대면 상담 관리"
+              />
+            </div>
           )}
         </div>
       </main>

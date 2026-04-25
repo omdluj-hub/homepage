@@ -23,29 +23,55 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const { id, is_read } = await req.json();
-    const { error } = await supabase.from('inquiries').update({ is_read }).eq('id', id);
-    if (error) throw error;
+    const { id, is_read, source } = await req.json();
+    
+    if (source === '이벤트') {
+      const adminSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      const { error } = await adminSupabase.from('reservations').update({ is_read }).eq('id', id);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('inquiries').update({ is_read }).eq('id', id);
+      if (error) throw error;
+    }
+    
     return NextResponse.json({ success: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
 
+// Helper to create admin client inside PATCH
+import { createClient } from '@supabase/supabase-js';
+
 // 상담 삭제 기능 추가 (DELETE)
 export async function DELETE(req: NextRequest) {
   try {
-    const { ids } = await req.json(); // 삭제할 ID 배열
+    const { ids, source } = await req.json(); // 삭제할 ID 배열과 출처
     if (!ids || !Array.isArray(ids)) {
       return NextResponse.json({ error: 'Invalid IDs' }, { status: 400 });
     }
 
-    const { error } = await supabase
-      .from('inquiries')
-      .delete()
-      .in('id', ids);
+    if (source === '이벤트') {
+      const adminSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      const { error } = await adminSupabase
+        .from('reservations')
+        .delete()
+        .in('id', ids);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from('inquiries')
+        .delete()
+        .in('id', ids);
+      if (error) throw error;
+    }
 
-    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

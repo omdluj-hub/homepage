@@ -4,11 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 
+interface MenuItem {
+  name: string;
+  href: string;
+  subMenus: { name: string; href: string }[];
+  isExternal?: boolean;
+}
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     { 
       name: "병원소개", 
       href: "/about#director",

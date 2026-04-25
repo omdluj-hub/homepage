@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/clinic/diet/point',
     '/clinic/diet/remote',
     // 교통사고
+    '/clinic/traffic/info',
     '/clinic/traffic/treatment',
     '/clinic/traffic/chuna',
     '/clinic/traffic/room',

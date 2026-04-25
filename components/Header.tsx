@@ -30,7 +30,6 @@ const Header = () => {
       href: "/about#director",
       subMenus: [
         { name: "의료진 소개", href: "/about#director" },
-        { name: "병원 내부 소개", href: "/about#interior" },
         { name: "찾아오시는 길", href: "/contact" },
       ]
     },
@@ -67,8 +66,9 @@ const Header = () => {
     },
     { 
       name: "교통사고", 
-      href: "/clinic/traffic/treatment",
+      href: "/clinic/traffic/info",
       subMenus: [
+        { name: "접수 및 절차", href: "/clinic/traffic/info" },
         { name: "교통사고 치료", href: "/clinic/traffic/treatment" },
         { name: "추나요법", href: "/clinic/traffic/chuna" },
         { name: "프리미엄 입원실", href: "/clinic/traffic/room" },

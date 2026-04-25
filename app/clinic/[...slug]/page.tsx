@@ -195,6 +195,18 @@ const CLINIC_DATA: Record<string, any> = {
       { title: "자동차보험 적용", desc: "환자 부담금 없이 치료와 입원에 전념 가능" }
     ] 
   },
+  "traffic/info": { 
+    title: "교통사고 접수 및 관리", 
+    subtitle: "복잡한 절차 걱정 없이, 오직 회복에만 전념하세요", 
+    description: "교통사고 후유증 치료, 시작부터 끝까지 후한의원이 함께합니다. 사고 접수번호만 알려주시면 진료비 지불 보증 확인부터 보험사 연락까지 모든 행정 절차를 병원에서 직접 처리해 드립니다. 환자분은 본인부담금 없이 최상의 진료를 받으실 수 있습니다.", 
+    image: "/images/clinic/자보.jpg", 
+    features: [
+      { title: "본인부담금 0원", desc: "자동차보험 적용 시, 침·약침·추나·한약 등 모든 한방 치료를 본인 부담금 없이 받으실 수 있습니다." },
+      { title: "간편한 접수 시스템", desc: "대인사고 접수번호와 담당자 연락처만 알려주시면 나머지 모든 과정은 병원에서 대행합니다." },
+      { title: "입원 & 통원 맞춤 치료", desc: "환자분의 증상에 따라 365일 운영되는 쾌적한 1인 입원실 집중 치료와 세심한 통원 치료 중 선택 가능합니다." },
+      { title: "1:1 맞춤 상담 지원", desc: "단순 통증 치료를 넘어 향후 치료 계획, 후유증 예방, 보상 관련 절차 등 궁금하신 점을 상세히 상담해 드립니다." }
+    ] 
+  },
   "traffic/treatment": { 
     title: "교통사고 치료", 
     subtitle: "체계적인 단계별 치료로 후유증의 뿌리까지 해결합니다", 
@@ -278,6 +290,7 @@ const MENU_STRUCTURE = [
     name: "교통사고", 
     path: "traffic",
     subMenus: [
+      { name: "접수 및 절차", href: "/clinic/traffic/info" },
       { name: "교통사고 치료", href: "/clinic/traffic/treatment" },
       { name: "추나요법", href: "/clinic/traffic/chuna" },
       { name: "프리미엄 입원실", href: "/clinic/traffic/room" },

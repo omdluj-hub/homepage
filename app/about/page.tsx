@@ -91,55 +91,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Hospital Interior Slider Section */}
-      <section id="interior" className="py-24 bg-secondary scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-primary mb-4 italic">Hospital Tour</h2>
-            <p className="text-muted">후한의원 구미점의 쾌적한 공간을 확인해 보세요.</p>
-          </div>
-          
-          <div className="relative group max-w-5xl mx-auto">
-            {/* Main Slider */}
-            <div className="relative h-[400px] md:h-[600px] rounded-2xl overflow-hidden shadow-2xl bg-black">
-              {interiorImages.map((image, idx) => (
-                <div 
-                  key={idx}
-                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                >
-                  <Image src={image.src} alt="병원 내부 시설" fill className="object-cover" />
-                </div>
-              ))}
-
-              {/* Navigation Arrows */}
-              <button 
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
-              >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-              </button>
-              <button 
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
-              >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-              </button>
-            </div>
-
-            {/* Pagination Dots */}
-            <div className="flex justify-center mt-8 gap-3">
-              {interiorImages.map((_, idx) => (
-                <button 
-                  key={idx}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`w-3 h-3 rounded-full transition-all ${idx === currentSlide ? 'bg-point-green w-8' : 'bg-gray-300'}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Hospital Philosophy */}
       <section className="py-20 bg-white text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

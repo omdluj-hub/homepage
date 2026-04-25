@@ -143,6 +143,7 @@ const Header = () => {
           <div className="flex md:hidden items-center gap-3">
             <Link 
               href="/event" 
+              onClick={() => setIsOpen(false)}
               className="bg-point-green text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm animate-pulse"
             >
               이벤트

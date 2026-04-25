@@ -411,14 +411,23 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
 
               {data.cta && (
                 <div className="mt-12">
-                  <a 
-                    href={data.cta.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-point-green text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-opacity-90 hover:scale-105 transition-all"
-                  >
-                    {data.cta.title}
-                  </a>
+                  {data.cta.href.startsWith('/') ? (
+                    <Link
+                      href={data.cta.href}
+                      className="inline-block bg-point-green text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-opacity-90 hover:scale-105 transition-all"
+                    >
+                      {data.cta.title}
+                    </Link>
+                  ) : (
+                    <a 
+                      href={data.cta.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-point-green text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-opacity-90 hover:scale-105 transition-all"
+                    >
+                      {data.cta.title}
+                    </a>
+                  )}
                 </div>
               )}
             </div>

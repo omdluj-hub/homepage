@@ -26,14 +26,6 @@ const Header = () => {
 
   const menuItems: MenuItem[] = [
     { 
-      name: "병원소개", 
-      href: "/about#director",
-      subMenus: [
-        { name: "의료진 소개", href: "/about#director" },
-        { name: "찾아오시는 길", href: "/contact" },
-      ]
-    },
-    { 
       name: "피부 클리닉", 
       href: "/clinic/skin/acne",
       subMenus: [
@@ -43,12 +35,6 @@ const Header = () => {
         { name: "사마귀", href: "/clinic/skin/wart" },
         { name: "지루성/주사피부염", href: "/clinic/skin/seborrheic" },
         { name: "안면홍조", href: "/clinic/skin/rosacea" },
-      ]
-    },
-    { 
-      name: "피부미용", 
-      href: "/clinic/beauty/lifting",
-      subMenus: [
         { name: "리프팅", href: "/clinic/beauty/lifting" },
         { name: "윤곽약침", href: "/clinic/beauty/contour" },
         { name: "스킨부스터", href: "/clinic/beauty/skin-booster" },
@@ -80,7 +66,14 @@ const Header = () => {
       subMenus: [],
       isExternal: true
     },
-    { name: "상담문의", href: "/contact", subMenus: [] },
+    { 
+      name: "병원소개", 
+      href: "/about#director",
+      subMenus: [
+        { name: "의료진 소개", href: "/about#director" },
+        { name: "찾아오시는 길", href: "/#location" },
+      ]
+    },
   ];
 
   return (
@@ -140,12 +133,14 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link 
-              href="/event"
+            <a 
+              href="https://event-snowy-ten.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hidden sm:block bg-black text-white px-6 py-2 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-gray-800 transition-luxury"
             >
               Event
-            </Link>
+            </a>
             <button 
               onClick={() => setIsOpen(!isOpen)} 
               className="lg:hidden p-2 text-black"

@@ -240,6 +240,66 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Quick Inquiry Section */}
+      <section className="bg-white py-32 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+            <div id="location">
+              <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Location & Hours</h2>
+              <h3 className="text-4xl font-black tracking-tighter mb-12">CONTACT US</h3>
+              
+              <div className="bg-gray-50 aspect-video w-full mb-12 grayscale hover:grayscale-0 transition-all duration-1000 border border-gray-100">
+                <iframe 
+                  src="https://maps.google.com/maps?q=후한의원%20구미점&t=&z=17&ie=UTF8&iwloc=&output=embed" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={true} 
+                  loading="lazy" 
+                  title="후한의원 구미점 오시는 길"
+                ></iframe>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Address</p>
+                  <p className="text-lg font-medium text-black leading-relaxed">
+                    경북 구미시 인동중앙로 9-3 4층 <br />
+                    (인동동)
+                  </p>
+                  <a 
+                    href="https://naver.me/5N15Owng" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block text-sm font-bold border-b border-black pb-1 hover:text-gray-400 hover:border-gray-400 transition-all"
+                  >
+                    Get Directions
+                  </a>
+                </div>
+                <div className="space-y-6">
+                  <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Consultation</p>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <p className="flex justify-between"><span>평일</span> <span>10:30 - 20:30</span></p>
+                    <p className="flex justify-between font-bold text-black"><span>토요일</span> <span>10:00 - 14:00</span></p>
+                    <p className="flex justify-between text-point-green font-bold italic"><span>입원실</span> <span>365일 상시 운영</span></p>
+                    <p className="text-[11px] text-gray-400 pt-2">* 점심시간: 13:00 - 14:00 (평일)</p>
+                    <p className="text-[11px] text-gray-400">* 목요일 오전 휴진 (야간진료만 가능)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Concierge</h2>
+              <h3 className="text-4xl font-black tracking-tighter mb-12">QUICK INQUIRY</h3>
+              <div className="bg-black p-12 text-white">
+                <QuickInquiry />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

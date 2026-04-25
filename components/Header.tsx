@@ -67,8 +67,9 @@ const Header = () => {
     },
     { 
       name: "이벤트", 
-      href: "/event", 
+      href: "https://event-snowy-ten.vercel.app/", 
       subMenus: [],
+      isExternal: true
     },
     { name: "상담문의", href: "/contact", subMenus: [] },
   ];
@@ -141,13 +142,14 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-3">
-            <Link 
-              href="/event" 
-              onClick={() => setIsOpen(false)}
+            <a 
+              href="https://event-snowy-ten.vercel.app/" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-point-green text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm animate-pulse"
             >
               이벤트
-            </Link>
+            </a>
             <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 p-2">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isOpen ? (

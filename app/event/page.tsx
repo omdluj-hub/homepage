@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function EventPage() {
+export default function AdminInquiryPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -14,9 +14,9 @@ export default function EventPage() {
   return (
     <div className="w-full flex flex-col" style={{ height: 'calc(100vh - 80px)' }}>
       <iframe
-        src="https://event-snowy-ten.vercel.app/"
+        src="https://bbs-ruddy-iota.vercel.app/diet"
         className="w-full h-full border-none"
-        title="후한의원 구미점 이벤트"
+        title="비대면 상담 신청 관리"
         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
         allowFullScreen
       />

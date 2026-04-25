@@ -303,7 +303,7 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
     if (data?.images && data.images.length > 1) {
       const timer = setInterval(() => {
         setMainImageSlide((prev) => (prev + 1) % data.images.length);
-      }, 3000);
+      }, 5000);
       return () => clearInterval(timer);
     }
   }, [data?.images]);
@@ -314,21 +314,21 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
   const prevSlide = () => data.gallery && setCurrentSlide((prev) => (prev - 1 + data.gallery.length) % data.gallery.length);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-white">
       {/* Sub Navigation Bar */}
-      <nav className="bg-white border-b border-gray-100 sticky top-20 z-40 shadow-sm overflow-x-auto no-scrollbar">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-center min-w-max">
+      <nav className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-20 z-40 shadow-none overflow-x-auto no-scrollbar">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="flex items-center justify-center min-w-max gap-8">
             {subMenus.map((menu: any) => {
               const isActive = `/clinic/${fullPath}` === menu.href;
               return (
                 <Link
                   key={menu.name}
                   href={menu.href}
-                  className={`px-6 py-4 text-sm font-bold transition-all border-b-2 whitespace-nowrap ${
+                  className={`px-0 py-6 text-[11px] font-bold tracking-[0.2em] uppercase transition-luxury border-b-2 ${
                     isActive 
-                    ? "border-point-green text-point-green bg-secondary/50" 
-                    : "border-transparent text-gray-500 hover:text-primary hover:bg-gray-50"
+                    ? "border-black text-black" 
+                    : "border-transparent text-gray-400 hover:text-black"
                   }`}
                 >
                   {menu.name}
@@ -340,51 +340,37 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
       </nav>
 
       {/* Clinic Header */}
-      <section className="bg-primary py-28 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
-          <span className="inline-block px-4 py-1 bg-white/20 rounded-full text-sm font-medium mb-4 backdrop-blur-sm border border-white/30 text-white" style={{ color: 'white' }}>
-            후한의원 구미점 집중 진료
+      <section className="bg-black py-40 text-white relative overflow-hidden">
+        <div className="max-w-[1440px] mx-auto px-6 text-center relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-gray-500 mb-8">
+            Treatment Program
           </span>
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight text-white drop-shadow-lg" style={{ color: 'white' }}>
+          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-white">
             {data.title}
           </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md text-white/90 break-keep" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+          <p className="text-xl md:text-2xl max-w-2xl mx-auto font-light leading-relaxed text-gray-400 break-keep">
             {data.subtitle}
           </p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-16 items-center">
-            <div className="lg:w-1/2">
-              <div className={`relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 bg-white w-full ${data.images ? 'h-[450px]' : 'h-auto'}`}>
+      <section className="py-32 bg-white">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+          <div className="flex flex-col lg:flex-row gap-24 items-start">
+            <div className="lg:w-1/2 sticky top-40">
+              <div className={`relative overflow-hidden bg-gray-50 w-full ${data.images ? 'h-[600px]' : 'h-auto'}`}>
                 {data.images ? (
                   <div className="relative h-full w-full">
                     {data.images.map((img: string, idx: number) => (
                       <div 
                         key={idx} 
-                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === mainImageSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                        className={`absolute inset-0 transition-luxury duration-1000 ${idx === mainImageSlide ? 'opacity-100' : 'opacity-0'}`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={img} alt={`${data.title} ${idx + 1}`} className="w-full h-full object-contain bg-gray-50" />
+                        <img src={img} alt={`${data.title} ${idx + 1}`} className="w-full h-full object-cover" />
                       </div>
                     ))}
-                    {data.images.length > 1 && (
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-                        {data.images.map((_: any, idx: number) => (
-                          <button 
-                            key={idx}
-                            onClick={() => setMainImageSlide(idx)}
-                            className={`w-2 h-2 rounded-full transition-all ${idx === mainImageSlide ? 'bg-point-green w-6' : 'bg-gray-300'}`}
-                          />
-                        ))}
-                      </div>
-                    )}
                   </div>
                 ) : (
                   <div className="w-full h-full">
@@ -394,38 +380,49 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
                 )}
               </div>
             </div>
+            
             <div className="lg:w-1/2">
-              <h2 className="text-2xl font-bold text-primary mb-6">진료 안내</h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-10 break-keep">{data.description}</p>
-              <div className="space-y-6 break-keep">
+              <div className="mb-20">
+                <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Overview</h2>
+                <p className="text-2xl text-black font-light leading-relaxed mb-12 break-keep">{data.description}</p>
+              </div>
+
+              <div className="space-y-16 break-keep">
+                <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400">Key Features</h2>
                 {data.features.map((feature: any, idx: number) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-point-green font-bold border border-gray-100">{idx + 1}</div>
-                    <div>
-                      <h3 className="font-bold text-gray-800 mb-1">{feature.title}</h3>
-                      <p className="text-muted text-sm">{feature.desc}</p>
+                  <div key={idx} className="flex gap-12 group">
+                    <span className="text-4xl font-black text-gray-100 group-hover:text-black transition-luxury">0{idx + 1}</span>
+                    <div className="pt-2">
+                      <h3 className="text-xl font-bold text-black mb-4 tracking-tight">{feature.title}</h3>
+                      <p className="text-gray-500 font-light leading-relaxed">{feature.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
               {data.cta && (
-                <div className="mt-12">
+                <div className="mt-24 pt-12 border-t border-gray-100">
                   {data.cta.href.startsWith('/') ? (
                     <Link
                       href={data.cta.href}
-                      className="inline-block bg-point-green text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-opacity-90 hover:scale-105 transition-all"
+                      className="inline-flex items-center gap-6 bg-black text-white px-10 py-6 tracking-widest uppercase text-xs font-bold hover:bg-gray-800 transition-luxury group"
                     >
                       {data.cta.title}
+                      <svg className="w-5 h-5 transition-transform group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
                     </Link>
                   ) : (
                     <a 
                       href={data.cta.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block bg-point-green text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-opacity-90 hover:scale-105 transition-all"
+                      className="inline-flex items-center gap-6 bg-black text-white px-10 py-6 tracking-widest uppercase text-xs font-bold hover:bg-gray-800 transition-luxury group"
                     >
                       {data.cta.title}
+                      <svg className="w-5 h-5 transition-transform group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
                     </a>
                   )}
                 </div>
@@ -435,46 +432,33 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
         </div>
       </section>
 
-      {/* Gallery Section (Only for pages with gallery data) */}
+      {/* Gallery Section */}
       {data.gallery && (
-        <section className="py-20 bg-secondary">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-primary mb-4 italic">Premium Facility Gallery</h2>
-              <p className="text-muted">후한의원 구미점만의 고품격 입원 환경을 확인하세요.</p>
+        <section className="py-32 bg-black text-white">
+          <div className="max-w-[1440px] mx-auto px-6">
+            <div className="text-center mb-24">
+              <h2 className="text-[10px] font-bold tracking-[0.4em] uppercase text-gray-500 mb-6">Gallery</h2>
+              <h3 className="text-5xl font-black tracking-tighter">SPACE EXPERIENCE</h3>
             </div>
             
-            <div className="relative group max-w-4xl mx-auto">
-              <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-black border-4 border-white">
+            <div className="relative group max-w-5xl mx-auto">
+              <div className="relative h-[500px] md:h-[700px] overflow-hidden bg-gray-900 shadow-2xl">
                 {data.gallery.map((img: string, idx: number) => (
                   <div 
                     key={idx}
-                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                    className={`absolute inset-0 transition-luxury duration-1000 ${idx === currentSlide ? 'opacity-100' : 'opacity-0'}`}
                   >
                     <Image src={img} alt={`갤러리 이미지 ${idx + 1}`} fill className="object-cover" />
                   </div>
                 ))}
-                
-                <button 
-                  onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                </button>
-                <button 
-                  onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                </button>
               </div>
               
-              <div className="flex justify-center mt-6 gap-2">
+              <div className="flex justify-center mt-12 gap-4">
                 {data.gallery.map((_: any, idx: number) => (
                   <button 
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`w-2 h-2 rounded-full transition-all ${idx === currentSlide ? 'bg-point-green w-6' : 'bg-gray-300'}`}
+                    className={`h-[2px] transition-all duration-500 ${idx === currentSlide ? 'bg-white w-12' : 'bg-gray-800 w-6 hover:bg-gray-600'}`}
                   />
                 ))}
               </div>

@@ -2,15 +2,15 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #333333;
-  --primary: #4a5568; /* Deep Gray-Blue */
+  --foreground: #111111;
+  --primary: #111111; /* Deep Black for high-end look */
   --primary-foreground: #ffffff;
-  --secondary: #f7fafc; /* Light Gray */
-  --secondary-foreground: #2d3748;
-  --accent: #718096; /* Medium Gray */
-  --point-green: #5a8d54; /* Subdued Green as accent */
-  --muted: #718096;
-  --border: #edf2f7;
+  --secondary: #fafafa; /* Off-white / Very light gray */
+  --secondary-foreground: #111111;
+  --accent: #f0f0f0;
+  --point-green: #4a5d23; /* Dark Olive for subtle medical accent */
+  --muted: #888888;
+  --border: #eeeeee;
 }
 
 @theme inline {
@@ -32,9 +32,30 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  letter-spacing: -0.02em;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--primary);
   font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+/* Custom Minimalist Utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Transitions */
+.transition-luxury {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }

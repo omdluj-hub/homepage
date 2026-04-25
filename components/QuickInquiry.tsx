@@ -38,89 +38,80 @@ const QuickInquiry = () => {
   };
 
   return (
-    <section className="bg-secondary py-16 px-4 sm:px-6 lg:px-8 rounded-2xl shadow-sm border border-gray-100">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-primary mb-2">빠른 상담 신청</h2>
-          <p className="text-muted">궁금하신 점을 남겨주시면 정성껏 답변해 드리겠습니다.</p>
+    <section className="bg-black text-white py-32 px-6">
+      <div className="max-w-xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-[10px] font-bold tracking-[0.4em] uppercase text-gray-500 mb-6">Concierge</h2>
+          <h3 className="text-4xl font-black tracking-tighter">QUICK INQUIRY</h3>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">성함</label>
+        <form onSubmit={handleSubmit} className="space-y-12">
+          <div className="grid grid-cols-1 gap-12">
+            <div className="relative group">
               <input
                 type="text"
-                id="name"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                className="w-full bg-transparent border-b border-gray-800 py-4 outline-none focus:border-white transition-colors text-lg font-light"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="성함"
               />
             </div>
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">연락처</label>
+            <div className="relative group">
               <input
                 type="tel"
-                id="phone"
-                placeholder="010-0000-0000"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                className="w-full bg-transparent border-b border-gray-800 py-4 outline-none focus:border-white transition-colors text-lg font-light"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="연락처"
               />
             </div>
           </div>
           
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">관심 진료</label>
             <select
-              id="category"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-white"
+              className="w-full bg-transparent border-b border-gray-800 py-4 outline-none focus:border-white transition-colors text-lg font-light appearance-none"
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             >
-              <option>여드름/흉터</option>
-              <option>피부질환</option>
-              <option>피부미용</option>
-              <option>다이어트</option>
-              <option>교통사고 입원</option>
-              <option>기타</option>
+              <option className="bg-black">여드름/흉터</option>
+              <option className="bg-black">피부질환</option>
+              <option className="bg-black">피부미용</option>
+              <option className="bg-black">다이어트</option>
+              <option className="bg-black">교통사고 입원</option>
+              <option className="bg-black">기타</option>
             </select>
           </div>
           
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">문의내용</label>
             <textarea
-              id="message"
-              rows={4}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+              rows={3}
+              className="w-full bg-transparent border-b border-gray-800 py-4 outline-none focus:border-white transition-colors text-lg font-light resize-none"
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              placeholder="문의내용"
             ></textarea>
           </div>
           
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                id="privacy"
-                type="checkbox"
-                className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-                checked={formData.privacy}
-                onChange={(e) => setFormData({ ...formData, privacy: e.target.checked })}
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="privacy" className="font-medium text-gray-700">개인정보 수집 및 이용 동의 (필수)</label>
-              <p className="text-gray-500 text-xs mt-1">입력하신 정보는 상담 목적으로만 사용되며, 그 외의 목적으로는 활용되지 않습니다.</p>
-            </div>
+          <div className="flex items-start gap-4">
+            <input
+              id="privacy"
+              type="checkbox"
+              className="mt-1 h-4 w-4 bg-transparent border-gray-800 rounded focus:ring-0"
+              checked={formData.privacy}
+              onChange={(e) => setFormData({ ...formData, privacy: e.target.checked })}
+            />
+            <label htmlFor="privacy" className="text-xs text-gray-500 font-light leading-relaxed">
+              개인정보 수집 및 이용 동의 (필수). 입력하신 정보는 상담 목적으로만 사용되며, 그 외의 목적으로는 활용되지 않습니다.
+            </label>
           </div>
           
           <button
             type="submit"
-            className="w-full bg-primary text-white font-bold py-4 px-6 rounded-lg hover:bg-opacity-90 transition-all shadow-md transform hover:-translate-y-0.5"
+            className="w-full bg-white text-black font-bold py-6 tracking-[0.2em] uppercase hover:bg-gray-200 transition-luxury"
           >
-            상담 신청하기
+            Submit Inquiry
           </button>
         </form>
       </div>

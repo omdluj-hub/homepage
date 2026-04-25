@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ExternalLink, Menu, X, ChevronDown } from "lucide-react";
 
 interface MenuItem {
   name: string;
@@ -13,7 +13,16 @@ interface MenuItem {
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const menuItems: MenuItem[] = [
     { 
@@ -75,23 +84,21 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/logo.gif" alt="후한의원 구미점 로고" className="h-10 w-auto" />
-              <span className="text-2xl font-bold text-primary">후한의원 <span className="text-point-green text-lg font-normal">구미점</span></span>
-            </Link>
-          </div>
+    <header className={`fixed top-0 left-0 w-full z-[100] transition-luxury ${isScrolled ? "bg-white/90 backdrop-blur-md py-4 border-b border-gray-100" : "bg-transparent py-8"}`}>
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+        <div className="flex justify-between items-center">
+          <Link href="/" className="group flex items-center gap-4">
+            <span className="text-2xl font-black tracking-tighter text-black">HOO CLINIC</span>
+            <span className="h-4 w-[1px] bg-gray-300"></span>
+            <span className="text-xs font-bold tracking-widest text-gray-500 group-hover:text-black transition-colors uppercase">Gumi</span>
+          </Link>
           
           {/* Desktop Menu */}
-          <nav className="hidden md:flex space-x-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {menuItems.map((item) => (
               <div 
                 key={item.name} 
-                className="relative group"
+                className="relative group/nav"
                 onMouseEnter={() => setActiveMenu(item.name)}
                 onMouseLeave={() => setActiveMenu(null)}
               >
@@ -100,36 +107,28 @@ const Header = () => {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 text-primary hover:text-point-green font-bold transition-colors flex items-center gap-1 group"
+                    className="px-5 py-2 text-[13px] font-bold tracking-tight text-gray-600 hover:text-black transition-colors flex items-center gap-1 uppercase"
                   >
                     {item.name}
-                    <ExternalLink size={14} className="text-gray-400 group-hover:text-point-green" />
+                    <ExternalLink size={12} className="opacity-0 group-hover/nav:opacity-100 transition-opacity" />
                   </a>
                 ) : (
                   <Link
                     href={item.href}
-                    className="px-4 py-2 text-gray-700 hover:text-point-green font-medium transition-colors flex items-center gap-1 group"
+                    className="px-5 py-2 text-[13px] font-bold tracking-tight text-gray-600 hover:text-black transition-colors flex items-center gap-1 uppercase"
                   >
                     {item.name}
-                    {item.subMenus.length > 0 && (
-                      <svg 
-                        className="w-4 h-4 text-gray-400 group-hover:text-point-green transition-transform group-hover:rotate-180" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    )}
+                    {item.subMenus.length > 0 && <ChevronDown size={14} className="opacity-40 group-hover/nav:rotate-180 transition-transform" />}
                   </Link>
                 )}
+                
                 {item.subMenus.length > 0 && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-white border border-gray-100 shadow-lg rounded-b-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-2xl py-4 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-luxury">
                     {item.subMenus.map((sub) => (
                       <Link
                         key={sub.name}
                         href={sub.href}
-                        className="block px-6 py-2 text-sm text-gray-600 hover:bg-secondary hover:text-point-green"
+                        className="block px-6 py-2 text-[12px] text-gray-400 hover:text-black hover:translate-x-1 transition-luxury"
                       >
                         {sub.name}
                       </Link>
@@ -140,75 +139,55 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-3">
-            <a 
-              href="https://event-snowy-ten.vercel.app/" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-point-green text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm animate-pulse"
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/event"
+              className="hidden sm:block bg-black text-white px-6 py-2 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-gray-800 transition-luxury"
             >
-              이벤트
-            </a>
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 p-2">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              Event
+            </Link>
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="lg:hidden p-2 text-black"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu Content */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-b border-gray-100 max-h-[80vh] overflow-y-auto">
-          <div className="px-4 py-4 space-y-1">
-            {menuItems.map((item) => (
-              <div key={item.name} className="py-2">
-                {item.isExternal ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-lg font-bold text-accent mb-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item.name} <span className="text-xs font-normal text-gray-400 ml-1">(새창)</span>
-                  </a>
-                ) : (
-                  <>
-                    <Link
-                      href={item.href}
-                      className="block text-lg font-bold text-primary mb-2"
-                      onClick={() => !item.subMenus.length && setIsOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                    {item.subMenus.length > 0 && (
-                      <div className="grid grid-cols-2 gap-2 pl-2">
-                        {item.subMenus.map((sub) => (
-                          <Link
-                            key={sub.name}
-                            href={sub.href}
-                            className="text-sm text-gray-600 py-1 hover:text-point-green"
-                            onClick={() => setIsOpen(false)}
-                          >
-                            {sub.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
+      {/* Mobile Menu */}
+      <div className={`fixed inset-0 bg-white z-[90] lg:hidden transition-luxury transform ${isOpen ? "translate-y-0" : "-translate-y-full"}`}>
+        <div className="flex flex-col h-full pt-32 px-12 overflow-y-auto pb-12">
+          {menuItems.map((item) => (
+            <div key={item.name} className="mb-8 border-b border-gray-50 pb-8">
+              {item.isExternal ? (
+                <a href={item.href} target="_blank" className="text-3xl font-black tracking-tighter" onClick={() => setIsOpen(false)}>
+                  {item.name}
+                </a>
+              ) : (
+                <>
+                  <Link href={item.href} className="text-3xl font-black tracking-tighter block mb-6" onClick={() => !item.subMenus.length && setIsOpen(false)}>
+                    {item.name}
+                  </Link>
+                  <div className="grid grid-cols-1 gap-4 pl-4">
+                    {item.subMenus.map((sub) => (
+                      <Link 
+                        key={sub.name} 
+                        href={sub.href} 
+                        className="text-lg text-gray-400 font-light hover:text-black"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </header>
   );
 };

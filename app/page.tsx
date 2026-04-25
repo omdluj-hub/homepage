@@ -266,8 +266,8 @@ export default function Home() {
                 <div className="space-y-6">
                   <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Address</p>
                   <p className="text-lg font-medium text-black leading-relaxed">
-                    경북 구미시 인동중앙로 9-3 4층 <br />
-                    (인동동)
+                    경북 구미시 인동가산로 9-3 4층 <br />
+                    (황상동)
                   </p>
                   <a 
                     href="https://naver.me/5N15Owng" 
@@ -282,10 +282,10 @@ export default function Home() {
                   <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Consultation</p>
                   <div className="space-y-2 text-sm text-gray-600">
                     <p className="flex justify-between"><span>평일</span> <span>10:30 - 20:30</span></p>
-                    <p className="flex justify-between font-bold text-black"><span>토요일</span> <span>10:00 - 14:00</span></p>
-                    <p className="flex justify-between text-point-green font-bold italic"><span>입원실</span> <span>365일 상시 운영</span></p>
-                    <p className="text-[11px] text-gray-400 pt-2">* 점심시간: 13:00 - 14:00 (평일)</p>
-                    <p className="text-[11px] text-gray-400">* 목요일 오전 휴진 (야간진료만 가능)</p>
+                    <p className="flex justify-between"><span>토요일</span> <span>10:00 - 14:00</span></p>
+                    <p className="flex justify-between font-bold text-black italic"><span>휴진</span> <span>목요일, 일요일, 공휴일</span></p>
+                    <p className="text-[11px] text-gray-400 pt-2">* 입원실은 365일 상시 운영됩니다.</p>
+                    <p className="text-[11px] text-gray-400">* 점심시간: 13:00 - 14:00 (평일)</p>
                   </div>
                 </div>
               </div>
@@ -294,7 +294,7 @@ export default function Home() {
             <div>
               <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Concierge</h2>
               <h3 className="text-4xl font-black tracking-tighter mb-12">QUICK INQUIRY</h3>
-              <div className="bg-black p-12 text-white">
+              <div className="bg-white border border-gray-100 p-12 text-black shadow-xl">
                 <QuickInquiry />
               </div>
             </div>

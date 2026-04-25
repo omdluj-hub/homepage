@@ -15,7 +15,7 @@ const Footer = () => {
             </Link>
             <div className="space-y-6 text-sm text-gray-500 font-light leading-relaxed">
               <p className="text-gray-900 font-bold underline decoration-point-green/30 decoration-4 underline-offset-4 inline-block">후한의원 구미점</p>
-              <p>주소: 경북 구미시 인동중앙로 9-3 4층</p>
+              <p>주소: 경북 구미시 인동가산로 9-3 4층</p>
               <p>대표자: 이언호 | 사업자번호: 147-92-01460</p>
               <p>전화: 054-474-1075</p>
               <p className="pt-4">© 2026 HOO CLINIC GUMI. All Rights Reserved.</p>
@@ -31,17 +31,16 @@ const Footer = () => {
             <div>
               <h4 className="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-8">Navigation</h4>
               <ul className="space-y-4 text-[13px] font-medium text-gray-600">
-                <li><Link href="/about" className="hover:text-black transition-colors">병원소개</Link></li>
                 <li><Link href="/clinic/skin/acne" className="hover:text-black transition-colors">피부 클리닉</Link></li>
-                <li><Link href="/clinic/beauty/lifting" className="hover:text-black transition-colors">피부미용</Link></li>
                 <li><Link href="/clinic/diet/medicine" className="hover:text-black transition-colors">다이어트</Link></li>
+                <li><Link href="/clinic/traffic/info" className="hover:text-black transition-colors">교통사고</Link></li>
+                <li><Link href="/about" className="hover:text-black transition-colors">병원소개</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-8">Support</h4>
               <ul className="space-y-4 text-[13px] font-medium text-gray-600">
-                <li><Link href="/contact" className="hover:text-black transition-colors">찾아오시는 길</Link></li>
-                <li><Link href="/contact" className="hover:text-black transition-colors">상담문의</Link></li>
+                <li><Link href="/#location" className="hover:text-black transition-colors">찾아오시는 길</Link></li>
                 <li><Link href="/admin" className="hover:text-black transition-colors">관리자</Link></li>
               </ul>
             </div>
@@ -67,8 +66,8 @@ const Footer = () => {
                 <div className="text-[13px] font-light text-gray-500 leading-relaxed">
                   <p><span className="font-bold text-gray-900 mr-2">평일</span> 10:30 - 20:30 (점심 13-14시)</p>
                   <p><span className="font-bold text-gray-900 mr-2">토요일</span> 10:00 - 14:00 (점심시간 없음)</p>
-                  <p><span className="font-bold text-gray-400 mr-2 italic">입원실</span> 365일 상시 운영</p>
-                  <p className="mt-2 text-[11px] text-gray-400">* 목요일은 야간진료(20:30)만 가능 (오전 휴진)</p>
+                  <p><span className="font-bold text-gray-900 mr-2 italic">휴진</span> 목요일, 일요일, 공휴일</p>
+                  <p className="mt-2 text-[11px] text-gray-400">* 입원실은 365일 상시 운영됩니다.</p>
                 </div>
               </div>
             </div>

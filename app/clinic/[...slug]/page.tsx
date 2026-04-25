@@ -199,7 +199,7 @@ const CLINIC_DATA: Record<string, any> = {
     title: "교통사고 접수 및 관리", 
     subtitle: "복잡한 절차 걱정 없이, 오직 회복에만 전념하세요", 
     description: "교통사고 후유증 치료, 시작부터 끝까지 후한의원이 함께합니다. 사고 접수번호만 알려주시면 진료비 지불 보증 확인부터 보험사 연락까지 모든 행정 절차를 병원에서 직접 처리해 드립니다. 환자분은 본인부담금 없이 최상의 진료를 받으실 수 있습니다.", 
-    image: "/images/clinic/자보.jpg", 
+    image: "/images/traffic-info.png", 
     features: [
       { title: "본인부담금 0원", desc: "자동차보험 적용 시, 침·약침·추나·한약 등 모든 한방 치료를 본인 부담금 없이 받으실 수 있습니다." },
       { title: "간편한 접수 시스템", desc: "대인사고 접수번호와 담당자 연락처만 알려주시면 나머지 모든 과정은 병원에서 대행합니다." },
@@ -353,16 +353,16 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
       </nav>
 
       {/* Clinic Header */}
-      <section className="bg-black py-40 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 z-0"></div>
+      <section className="bg-[#0a0a0a] py-40 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/50 z-0"></div>
         <div className="max-w-[1440px] mx-auto px-6 text-center relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">
+          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-gray-500 mb-8">
             Treatment Program
           </span>
-          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter !text-white drop-shadow-[0_4px_12px_rgba(0,0,0,1)]" style={{ color: 'white' }}>
             {data.title}
           </h1>
-          <p className="text-xl md:text-2xl max-w-2xl mx-auto font-light leading-relaxed text-gray-300 break-keep drop-shadow-md">
+          <p className="text-xl md:text-2xl max-w-2xl mx-auto font-light leading-relaxed !text-white opacity-90 break-keep drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" style={{ color: 'rgba(255,255,255,0.9)' }}>
             {data.subtitle}
           </p>
         </div>

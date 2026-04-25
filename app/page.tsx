@@ -127,10 +127,9 @@ export default function Home() {
               <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Representative Director</h2>
               <div className="mb-12">
                 <h3 className="text-4xl md:text-5xl font-bold leading-tight mb-8">
-                  "환부의 증상만이 아닌, <br />
-                  <span className="italic">사람의 전체</span>를 바라봅니다."
-                </h3>
-                <div className="space-y-6 text-lg text-gray-500 font-light leading-relaxed">
+                  &quot;환부의 증상만이 아닌, <br />
+                  <span className="italic">사람의 전체</span>를 바라봅니다.&quot;
+                </h3>                <div className="space-y-6 text-lg text-gray-500 font-light leading-relaxed">
                   <p>
                     치료는 단순히 불편함을 없애는 과정이 아닙니다. <br />
                     후한의원 구미점은 환자분 한 분 한 분의 체질과 환경을 깊이 있게 분석하여, 

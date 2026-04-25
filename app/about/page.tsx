@@ -47,7 +47,7 @@ export default function AboutPage() {
             <div className="md:w-3/5">
               <span className="text-point-green font-bold mb-2 block tracking-widest uppercase text-sm">Representative Director</span>
               <h2 className="text-4xl font-bold text-primary mb-4">이언호 대표원장</h2>
-              <p className="text-xl text-muted mb-12 italic text-gray-500">"진심을 담은 진료로 삶의 질을 높여드리겠습니다."</p>
+              <p className="text-xl text-muted mb-12 italic text-gray-500">&quot;진심을 담은 진료로 삶의 질을 높여드리겠습니다.&quot;</p>
               
               <div className="grid grid-cols-1 gap-12">
                 {/* 약력 Section */}

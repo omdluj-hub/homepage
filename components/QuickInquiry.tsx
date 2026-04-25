@@ -110,7 +110,7 @@ const QuickInquiry = () => {
             type="submit"
             className="w-full bg-black text-white font-bold py-6 tracking-[0.2em] uppercase hover:bg-gray-800 transition-luxury"
           >
-            Submit Inquiry
+            간편상담 신청
           </button>
         </form>
       </div>

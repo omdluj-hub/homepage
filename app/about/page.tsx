@@ -47,9 +47,26 @@ export default function AboutPage() {
             <div className="md:w-3/5">
               <span className="text-point-green font-bold mb-2 block tracking-widest uppercase text-sm">Representative Director</span>
               <h2 className="text-4xl font-bold text-primary mb-4">이언호 대표원장</h2>
-              <p className="text-xl text-muted mb-12 italic text-gray-500">&quot;진심을 담은 진료로 삶의 질을 높여드리겠습니다.&quot;</p>
+              <p className="text-xl text-muted mb-8 italic text-gray-500">&quot;진심을 담은 진료로 삶의 질을 높여드리겠습니다.&quot;</p>
               
-              <div className="grid grid-cols-1 gap-12">
+              <div className="space-y-6 text-gray-600 leading-relaxed mb-12 break-keep">
+                <p>
+                  안녕하십니까. 후한의원 구미점 대표원장 이언호입니다. <br />
+                  많은 분들이 피부 질환이나 다이어트, 혹은 갑작스러운 사고 후유증으로 고통받으며 저희 병원을 찾으십니다. 
+                  단순히 눈에 보이는 증상만을 치료하는 것은 일시적인 방편일 뿐, 진정한 의미의 치유라고 할 수 없습니다.
+                </p>
+                <p>
+                  우리 몸은 유기적으로 연결되어 있으며, 피부에 나타나는 문제는 몸속 오장육부의 불균형을 알리는 신호입니다. 
+                  후한의원 구미점은 환자 한 분 한 분의 타고난 체질과 현재의 몸 상태, 그리고 생활 환경까지 면밀히 분석하여 
+                  근본적인 원인을 찾아내는 데 집중합니다.
+                </p>
+                <p>
+                  정직한 마음으로 꼭 필요한 진료만을 권하고, 최신 한방 의학 기술과 따뜻한 정성을 결합하여 
+                  여러분이 다시 건강한 미소와 자신감을 되찾으실 수 있도록 끝까지 책임지고 함께 걷겠습니다.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-12 pt-8 border-t border-gray-100">
                 {/* 약력 Section */}
                 <div>
                   <h3 className="text-xl font-bold text-primary mb-6 flex items-center gap-2">

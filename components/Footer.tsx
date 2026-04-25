@@ -16,7 +16,7 @@ const Footer = () => {
             <div className="space-y-6 text-sm text-gray-500 font-light leading-relaxed">
               <p className="text-gray-900 font-bold underline decoration-point-green/30 decoration-4 underline-offset-4 inline-block">후한의원 구미점</p>
               <p>주소: 경북 구미시 인동가산로 9-3 4층</p>
-              <p>대표자: 이언호 | 사업자번호: 147-92-01460</p>
+              <p>대표자: 이언호 | 사업자번호: 328-29-00914</p>
               <p>전화: 054-474-1075</p>
               <p className="pt-4">© 2026 HOO CLINIC GUMI. All Rights Reserved.</p>
             </div>

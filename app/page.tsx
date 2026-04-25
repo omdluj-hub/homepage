@@ -93,12 +93,23 @@ export default function Home() {
               겉으로 보이는 아름다움을 넘어, 내면의 균형에서 시작되는 진정한 변화. 후한의원 구미점이 당신의 본연의 빛을 찾아드립니다.
             </p>
 
-            <div className="flex flex-wrap gap-6">
+            <div className="flex flex-wrap gap-4">
               <Link 
-                href="/contact" 
+                href="https://m.booking.naver.com/booking/6/bizes/449323" 
+                target="_blank"
                 className="group flex items-center gap-4 bg-black text-white px-8 py-5 rounded-none hover:bg-gray-800 transition-luxury"
               >
-                <span className="font-bold tracking-widest uppercase text-sm">Make a Reservation</span>
+                <span className="font-bold tracking-widest uppercase text-sm">예약하기</span>
+                <svg className="w-5 h-5 transition-transform group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+              <Link 
+                href="https://bbs-ruddy-iota.vercel.app/diet" 
+                target="_blank"
+                className="group flex items-center gap-4 bg-white border border-black text-black px-8 py-5 rounded-none hover:bg-gray-50 transition-luxury"
+              >
+                <span className="font-bold tracking-widest uppercase text-sm">비대면 다이어트 상담</span>
                 <svg className="w-5 h-5 transition-transform group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -113,7 +124,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
             <div className="lg:col-span-5 relative">
-              <div className="aspect-[4/5] bg-gray-100 overflow-hidden">
+              <div className="aspect-[4/5] bg-gray-100 overflow-hidden shadow-2xl">
                 <Image 
                   src="/images/프로필사진.JPG" 
                   alt="Director" 
@@ -129,21 +140,26 @@ export default function Home() {
               <div className="mb-12">
                 <h3 className="text-4xl md:text-5xl font-bold leading-tight mb-8">
                   &quot;환부의 증상만이 아닌, <br />
-                  <span className="italic">사람의 전체</span>를 바라봅니다.&quot;
-                </h3>                <div className="space-y-6 text-lg text-gray-500 font-light leading-relaxed">
+                  <span className="italic text-point-green">사람의 전체</span>를 바라봅니다.&quot;
+                </h3>
+                <div className="space-y-6 text-lg text-gray-600 font-light leading-relaxed break-keep">
                   <p>
-                    치료는 단순히 불편함을 없애는 과정이 아닙니다. <br />
-                    후한의원 구미점은 환자분 한 분 한 분의 체질과 환경을 깊이 있게 분석하여, 
-                    단기적인 호전이 아닌 지속 가능한 건강을 설계합니다.
+                    반갑습니다. 후한의원 구미점 대표원장 이언호입니다. <br />
+                    제가 생각하는 진정한 치료란 단순히 겉으로 드러난 통증이나 증상을 잠재우는 것이 아닙니다. 
                   </p>
                   <p>
-                    피부 고민부터 다이어트까지, 여러분의 삶이 더 빛날 수 있도록 
-                    정교한 맞춤 진료로 함께하겠습니다.
+                    피부 고민부터 다이어트, 사고 후유증까지 모든 질환의 뿌리는 몸 내부의 불균형에 있습니다. 
+                    우리는 환자분 한 분 한 분의 체질과 생활 환경을 깊이 있게 분석하여, 
+                    우리 몸이 가진 본연의 자생력을 회복할 수 있는 가장 자연스럽고 정교한 길을 제시합니다.
+                  </p>
+                  <p>
+                    정직한 진료와 따뜻한 소통으로 여러분의 일상이 다시 건강하게 빛날 수 있도록 
+                    치료의 전 과정을 책임지고 함께하겠습니다.
                   </p>
                 </div>
               </div>
               <div className="pt-8 border-t border-gray-100 flex items-center gap-6">
-                <span className="text-xl font-bold">이언호 대표원장</span>
+                <span className="text-xl font-bold text-black">이언호 대표원장</span>
                 <Link href="/about#director" className="text-sm font-bold border-b border-black pb-1 hover:text-gray-400 hover:border-gray-400 transition-colors">
                   의료진 정보 보기
                 </Link>
@@ -195,29 +211,29 @@ export default function Home() {
             <div>
               <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-500 mb-8">Spatial Experience</h2>
               <h3 className="text-5xl md:text-6xl font-black tracking-tighter mb-12 leading-[1.1]">
-                회복을 위한 <br />
-                <span className="text-transparent border-text-white" style={{ WebkitTextStroke: '1px #fff' }}>완벽한 침묵</span>
+                오직 회복에만 집중하는 <br />
+                <span className="text-transparent border-text-white" style={{ WebkitTextStroke: '1px #fff' }}>프라이빗한 휴식</span>
               </h3>
-              <p className="text-xl text-gray-400 font-light mb-12 leading-relaxed max-w-lg">
-                후한의원 구미점의 프리미엄 1인실은 단순한 병실이 아닙니다. 환자분이 오직 자신의 회복에만 집중할 수 있도록 설계된 호텔급 휴식 공간입니다.
+              <p className="text-xl text-gray-400 font-light mb-12 leading-relaxed max-w-lg break-keep">
+                후한의원 구미점의 프리미엄 1인실은 단순한 병실이 아닙니다. 환자분이 오직 자신의 회복에만 전념할 수 있도록 설계된 호텔급 감성의 치유 공간입니다.
               </p>
               
               <div className="space-y-8">
                 {[
-                  { title: "PRIVATE", desc: "전 병실 쾌적한 1인실 시스템" },
-                  { title: "TECH", desc: "최신 모션베드 및 개별 냉난방" },
-                  { title: "CARE", desc: "365일 야간 및 주말 집중 진료" }
+                  { title: "PRIVATE", desc: "전 병실 쾌적한 독립형 1인실 시스템" },
+                  { title: "TECH", desc: "최신 프리미엄 모션베드 및 개별 냉난방" },
+                  { title: "CARE", desc: "365일 야간 및 주말 집중 진료 체계" }
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-8 border-l border-gray-800 pl-8">
-                    <span className="text-[10px] font-bold tracking-[0.2em] pt-1">{item.title}</span>
-                    <span className="text-lg font-medium">{item.desc}</span>
+                    <span className="text-[10px] font-bold tracking-[0.2em] pt-1 text-gray-500">{item.title}</span>
+                    <span className="text-lg font-medium text-gray-200">{item.desc}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="relative">
-              <div className="aspect-square relative overflow-hidden bg-gray-800">
+              <div className="aspect-square relative overflow-hidden bg-gray-800 border border-white/5 shadow-2xl">
                 {inpatientImages.map((img, idx) => (
                   <div 
                     key={idx}
@@ -248,9 +264,9 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
             <div id="location">
               <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Location & Hours</h2>
-              <h3 className="text-4xl font-black tracking-tighter mb-12">CONTACT US</h3>
+              <h3 className="text-4xl font-black tracking-tighter mb-12 text-black">CONTACT US</h3>
               
-              <div className="bg-gray-50 aspect-video w-full mb-12 grayscale hover:grayscale-0 transition-all duration-1000 border border-gray-100">
+              <div className="bg-gray-50 aspect-video w-full mb-12 grayscale hover:grayscale-0 transition-all duration-1000 border border-gray-100 shadow-inner overflow-hidden">
                 <iframe 
                   src="https://maps.google.com/maps?q=후한의원%20구미점&t=&z=17&ie=UTF8&iwloc=&output=embed" 
                   width="100%" 
@@ -281,8 +297,8 @@ export default function Home() {
                 <div className="space-y-6">
                   <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Consultation</p>
                   <div className="space-y-2 text-sm text-gray-600">
-                    <p className="flex justify-between"><span>평일</span> <span>10:30 - 20:30</span></p>
-                    <p className="flex justify-between"><span>토요일</span> <span>10:00 - 14:00</span></p>
+                    <p className="flex justify-between border-b border-gray-50 pb-2"><span>평일</span> <span>10:30 - 20:30</span></p>
+                    <p className="flex justify-between border-b border-gray-50 pb-2"><span>토요일</span> <span>10:00 - 14:00</span></p>
                     <p className="flex justify-between font-bold text-black italic"><span>휴진</span> <span>목요일, 일요일, 공휴일</span></p>
                     <p className="text-[11px] text-gray-400 pt-2">* 입원실은 365일 상시 운영됩니다.</p>
                     <p className="text-[11px] text-gray-400">* 점심시간: 13:00 - 14:00 (평일)</p>
@@ -293,7 +309,7 @@ export default function Home() {
 
             <div>
               <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Concierge</h2>
-              <h3 className="text-4xl font-black tracking-tighter mb-12">QUICK INQUIRY</h3>
+              <h3 className="text-4xl font-black tracking-tighter mb-12 text-black">QUICK INQUIRY</h3>
               <div className="bg-white border border-gray-100 p-12 text-black shadow-xl">
                 <QuickInquiry />
               </div>

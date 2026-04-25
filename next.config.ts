@@ -5,10 +5,7 @@ const nextConfig: NextConfig = {
     // pre-existing type errors are blocking deployment, temporarily ignore to allow design refresh
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // pre-existing lint errors are blocking deployment, temporarily ignore to allow design refresh
-    ignoreDuringBuilds: true,
-  }
+  // eslint key is not supported in the detected version's config object
 };
 
 export default nextConfig;

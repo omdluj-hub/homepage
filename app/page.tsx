@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import QuickInquiry from "@/components/QuickInquiry";
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);

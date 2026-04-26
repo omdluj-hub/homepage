@@ -67,7 +67,7 @@ export default function Home() {
   return (
     <div className="bg-white selection:bg-primary/20">
       {/* 01. Editorial Hero Section with Background Slider */}
-      <section className="relative h-screen flex items-center overflow-hidden pt-20">
+      <section className="relative min-h-[calc(100vh-80px)] lg:h-screen flex items-center overflow-visible lg:overflow-hidden pt-24 lg:pt-20 pb-20 lg:pb-0">
         {/* Background Slider (Low Opacity) */}
         <div className="absolute inset-0 z-0 bg-gray-50">
           {heroImages.map((img, idx) => (
@@ -84,10 +84,10 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center lg:items-end">
             {/* Left Part: Text Content */}
             <div className="lg:col-span-8">
-              <div className="overflow-hidden mb-10 flex items-center gap-4 animate-fade-in-up">
+              <div className="overflow-hidden mb-8 md:mb-10 flex items-center gap-4 animate-fade-in-up">
                 <div className="relative w-12 h-12 md:w-14 md:h-14 opacity-80">
                   <Image src="/images/logo.gif" alt="Hoo Clinic Logo" fill className="object-contain" />
                 </div>
@@ -97,51 +97,51 @@ export default function Home() {
                 </div>
               </div>
               
-              <h1 className="text-5xl md:text-8xl lg:text-[100px] leading-[1] mb-12 text-black animate-fade-in-up reveal-delay-1 tracking-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-8xl lg:text-[100px] leading-[1.1] lg:leading-[1] mb-8 md:mb-12 text-black animate-fade-in-up reveal-delay-1 tracking-tight">
                 A Healing Space <br />
                 <span className="font-serif italic text-primary">Designed for</span> <br />
                 Your Recovery
               </h1>
 
               <div className="relative pl-8 border-l border-primary/20 animate-fade-in-up reveal-delay-2 max-w-xl">
-                <p className="text-lg md:text-xl text-gray-700 leading-relaxed break-keep font-medium">
+                <p className="text-base md:text-xl text-gray-700 leading-relaxed break-keep font-medium">
                   365일 쉼 없이 움직이는 당신을 위해 <br />
                   가장 정교하고 따뜻한 치유의 공간을 제안합니다.
                 </p>
-                <p className="mt-4 text-sm text-gray-400 font-light italic">
+                <p className="mt-4 text-[10px] md:text-sm text-gray-400 font-light italic uppercase tracking-widest">
                   Premium Ward & Medical Aesthetic
                 </p>
               </div>
             </div>
 
             {/* Right Part: Reservation Buttons */}
-            <div className="lg:col-span-4 flex flex-col items-center lg:items-end gap-4 animate-fade-in-up reveal-delay-2">
+            <div className="lg:col-span-4 flex flex-col items-center lg:items-end gap-3 md:gap-4 animate-fade-in-up reveal-delay-2">
               <Link 
                 href="https://m.booking.naver.com/booking/6/bizes/449323" 
                 target="_blank"
-                className="bg-primary text-white px-12 py-6 text-[14px] font-bold tracking-[0.2em] uppercase hover:bg-primary-hover transition-all rounded-sm shadow-2xl shadow-primary/20 text-center min-w-[280px]"
+                className="bg-primary text-white px-8 md:px-12 py-5 md:py-6 text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase hover:bg-primary-hover transition-all rounded-sm shadow-2xl shadow-primary/20 text-center min-w-[260px] md:min-w-[280px]"
               >
                 네이버 예약하기
               </Link>
               <Link 
                 href="https://bbs-ruddy-iota.vercel.app/diet" 
                 target="_blank"
-                className="bg-accent text-white px-12 py-6 text-[14px] font-bold tracking-[0.2em] uppercase hover:bg-primary transition-all rounded-sm text-center min-w-[280px] shadow-lg"
+                className="bg-accent text-white px-8 md:px-12 py-5 md:py-6 text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase hover:bg-primary transition-all rounded-sm text-center min-w-[260px] md:min-w-[280px] shadow-lg"
               >
                 비대면 상담 (다이어트)
               </Link>
               <Link 
                 href="https://event-snowy-ten.vercel.app/" 
                 target="_blank"
-                className="bg-white border border-gray-200 text-gray-600 px-12 py-6 text-[14px] font-bold tracking-[0.2em] uppercase hover:bg-gray-50 transition-all rounded-sm text-center min-w-[280px] shadow-sm"
+                className="bg-white border border-gray-200 text-gray-600 px-8 md:px-12 py-5 md:py-6 text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase hover:bg-gray-50 transition-all rounded-sm text-center min-w-[260px] md:min-w-[280px] shadow-sm"
               >
-                이벤트 확인
+                이벤트 실시간 예약
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+        <div className="absolute bottom-6 md:bottom-12 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-4">
           <span className="text-[10px] font-bold tracking-widest uppercase text-gray-400 rotate-90 mb-8">Scroll</span>
           <div className="w-[1px] h-16 bg-gradient-to-b from-primary/50 to-transparent"></div>
         </div>

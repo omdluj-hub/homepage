@@ -76,14 +76,19 @@ const Footer = () => {
             <p>주소: 경북 구미시 인동가산로 9-3 노블레스타워 4층</p>
           </div>
           <div className="flex items-center gap-8">
-            <Link href="/admin" className="flex items-center gap-4 group">
-              <div className="relative w-8 h-8 opacity-40 group-hover:opacity-100 transition-opacity">
-                <Image src="/images/logo.gif" alt="Hoo Clinic Logo" fill className="object-contain" />
-              </div>
-              <span className="text-[11px] text-gray-300 group-hover:text-primary transition-colors">
-                © 2026 HOO CLINIC GUMI.
-              </span>
-            </Link>
+            <div className="flex items-center gap-6">
+              <Link href="/for-ai" className="text-[11px] text-gray-300 hover:text-primary transition-colors">
+                for AI
+              </Link>
+              <Link href="/admin" className="flex items-center gap-4 group">
+                <div className="relative w-8 h-8 opacity-40 group-hover:opacity-100 transition-opacity">
+                  <Image src="/images/logo.gif" alt="Hoo Clinic Logo" fill className="object-contain" />
+                </div>
+                <span className="text-[11px] text-gray-300 group-hover:text-primary transition-colors">
+                  © 2026 HOO CLINIC GUMI.
+                </span>
+              </Link>
+            </div>
             <button 
                 onClick={scrollToTop}
                 className="w-12 h-12 bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-accent hover:text-white transition-all rounded-full"

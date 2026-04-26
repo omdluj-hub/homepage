@@ -88,6 +88,12 @@ export async function GET() {
       pageViews,
       topReferers: Object.entries(referers).sort((a: any, b: any) => b[1] - a[1]).slice(0, 10),
       recentInquiries: uniqueInquiries.slice(0, 50)
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
     });
   } catch (e: any) {
     console.error('Stats API Error:', e);

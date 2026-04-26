@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
+import { use } from "react";
 
 const CLINIC_DATA: Record<string, any> = {
   // 피부 클리닉
@@ -53,7 +55,7 @@ const CLINIC_DATA: Record<string, any> = {
   "skin/wart": { 
     title: "사마귀", 
     subtitle: "바이러스 질환, 면역력이 근본적인 답입니다", 
-    description: "사마귀는 인유두종 바이러스(HPV) 감염 질환으로, 단순히 겉으로 보이는 병변만 제거하면 다시 번지기 쉽습니다. 몸의 면역 체계를 강화하여 바이러스를 스스로 이겨낼 수 있게 만드는 '면역 한약'과 병변을 직접 탈락시키는 '환부 집중 치료'를 병행하여 재발 없는 완치를 목표로 합니다.", 
+    description: "사마귀는 인유두종 바이러스(HPV) 감염 질환으로, 단순히 겉으로 보이는 병변만 제거하면 다시 번지기 쉽습니다. 몸의 면역 체계를 강화하여 바이러스를 스스로 이겨낼 수 있게 만드는 '면역 한약'과 병변을 직접 탈락시키는 '환부 집중 치료'를 병행하여 재발률을 낮추는 호전을 목표로 합니다.", 
     image: "/images/clinic/사마귀.jpg", 
     features: [
       { title: "면역 체계 재건", desc: "개인별 맞춤 한약으로 바이러스에 대항하는 신체 자생력을 증강시킵니다." },
@@ -239,7 +241,6 @@ const CLINIC_DATA: Record<string, any> = {
     gallery: [
       "/images/inpatient/KakaoTalk_20230131_100611036.jpg",
       "/images/inpatient/KakaoTalk_20230131_100621199.jpg",
-      "/images/inpatient/KakaoTalk_20230131_100612554.jpg",
       "/images/inpatient/KakaoTalk_20230131_100622250.jpg",
       "/images/inpatient/KakaoTalk_20230131_100624110.jpg",
     ],
@@ -251,7 +252,6 @@ const CLINIC_DATA: Record<string, any> = {
       { title: "맞춤 영양 식단", desc: "회복을 돕는 정성스럽고 건강한 한방 식사" },
     ] 
   },
-
 };
 
 const MENU_STRUCTURE = [
@@ -265,12 +265,6 @@ const MENU_STRUCTURE = [
       { name: "사마귀", href: "/clinic/skin/wart" },
       { name: "지루성/주사피부염", href: "/clinic/skin/seborrheic" },
       { name: "안면홍조", href: "/clinic/skin/rosacea" },
-    ]
-  },
-  { 
-    name: "피부미용", 
-    path: "beauty",
-    subMenus: [
       { name: "리프팅", href: "/clinic/beauty/lifting" },
       { name: "윤곽약침", href: "/clinic/beauty/contour" },
       { name: "스킨부스터", href: "/clinic/beauty/skin-booster" },
@@ -298,8 +292,6 @@ const MENU_STRUCTURE = [
   },
 ];
 
-import { use } from "react";
-
 export default function ClinicDetailPage({ params }: { params: Promise<{ slug: string[] }> }) {
   const unwrappedParams = use(params);
   const fullPath = unwrappedParams.slug.join('/');
@@ -313,6 +305,16 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
   const [mainImageSlide, setMainImageSlide] = useState(0);
 
   useEffect(() => {
+    const imagesToSlide = data?.gallery || data?.images;
+    if (imagesToSlide && imagesToSlide.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % imagesToSlide.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [data?.gallery, data?.images]);
+
+  useEffect(() => {
     if (data?.images && data.images.length > 1) {
       const timer = setInterval(() => {
         setMainImageSlide((prev) => (prev + 1) % data.images.length);
@@ -323,24 +325,21 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
 
   if (!data) notFound();
 
-  const nextSlide = () => data.gallery && setCurrentSlide((prev) => (prev + 1) % data.gallery.length);
-  const prevSlide = () => data.gallery && setCurrentSlide((prev) => (prev - 1 + data.gallery.length) % data.gallery.length);
-
   return (
     <div className="flex flex-col bg-white">
       {/* Sub Navigation Bar */}
-      <nav className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-20 z-40 shadow-none overflow-x-auto no-scrollbar">
+      <nav className="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-[72px] md:top-[88px] z-40 overflow-x-auto no-scrollbar">
         <div className="max-w-[1440px] mx-auto px-6">
-          <div className="flex items-center justify-center min-w-max gap-8">
+          <div className="flex items-center justify-center min-w-max gap-8 md:gap-12">
             {subMenus.map((menu: any) => {
               const isActive = `/clinic/${fullPath}` === menu.href;
               return (
                 <Link
                   key={menu.name}
                   href={menu.href}
-                  className={`px-0 py-6 text-[11px] font-bold tracking-[0.2em] uppercase transition-luxury border-b-2 ${
+                  className={`px-0 py-5 text-[11px] md:text-[12px] font-bold tracking-[0.2em] uppercase transition-all border-b-2 ${
                     isActive 
-                    ? "border-black text-black" 
+                    ? "border-primary text-primary" 
                     : "border-transparent text-gray-400 hover:text-black"
                   }`}
                 >
@@ -353,132 +352,166 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
       </nav>
 
       {/* Clinic Header */}
-      <section className="bg-[#0a0a0a] py-40 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/50 z-0"></div>
-        <div className="max-w-[1440px] mx-auto px-6 text-center relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-gray-500 mb-8">
+      <section className="bg-secondary py-24 md:py-32 border-b border-gray-100">
+        <div className="max-w-[1440px] mx-auto px-6 text-center animate-fade-in-up">
+          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-primary mb-8">
             Treatment Program
           </span>
-          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter !text-white drop-shadow-[0_4px_12px_rgba(0,0,0,1)]" style={{ color: 'white' }}>
+          <h1 className="text-4xl md:text-6xl text-black mb-8 tracking-tight uppercase">
             {data.title}
           </h1>
-          <p className="text-xl md:text-2xl max-w-2xl mx-auto font-light leading-relaxed !text-white opacity-90 break-keep drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" style={{ color: 'rgba(255,255,255,0.9)' }}>
+          <p className="text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed text-gray-500 break-keep">
             {data.subtitle}
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-32 bg-white">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12">
-          <div className="flex flex-col lg:flex-row gap-24 items-start">
-            <div className="lg:w-1/2 sticky top-40">
-              <div className={`relative overflow-hidden bg-gray-50 w-full ${data.images ? 'h-[600px]' : 'h-auto'}`}>
-                {data.images ? (
-                  <div className="relative h-full w-full">
-                    {data.images.map((img: string, idx: number) => (
-                      <div 
-                        key={idx} 
-                        className={`absolute inset-0 transition-luxury duration-1000 ${idx === mainImageSlide ? 'opacity-100' : 'opacity-0'}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={img} alt={`${data.title} ${idx + 1}`} className="w-full h-full object-cover" />
-                      </div>
+      {fullPath === 'traffic/room' ? (
+        /* --- PREMIUM WARD: Original Ratio Side-by-side Slider --- */
+        <section className="py-24 md:py-32 bg-white">
+          <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+            <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+              <div className="w-full lg:w-1/2 order-2 lg:order-1 sticky top-40">
+                {/* Fixed container width but flexible image height for natural ratio */}
+                <div className="grid luxury-shadow luxury-border bg-white rounded-sm overflow-hidden">
+                  {data.gallery.map((img: string, idx: number) => (
+                    <div 
+                      key={idx} 
+                      className={`col-start-1 row-start-1 transition-all duration-[1000ms] ease-in-out ${idx === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img} alt={`${data.title} ${idx + 1}`} className="w-full h-auto block" />
+                    </div>
+                  ))}
+                  
+                  {/* Small dots indicator instead of large counter to avoid distraction */}
+                  <div className="col-start-1 row-start-1 self-end justify-self-center mb-6 flex gap-2 z-20">
+                    {data.gallery.map((_: any, idx: number) => (
+                      <div key={idx} className={`h-1 transition-all ${idx === currentSlide ? 'w-6 bg-primary' : 'w-2 bg-gray-300'}`} />
                     ))}
                   </div>
-                ) : (
-                  <div className="w-full h-full">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={data.image} alt={data.title} className="w-full h-auto block" />
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <div className="lg:w-1/2">
-              <div className="mb-20">
-                <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400 mb-8">Overview</h2>
-                <p className="text-2xl text-black font-light leading-relaxed mb-12 break-keep">{data.description}</p>
-              </div>
-
-              <div className="space-y-16 break-keep">
-                <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-gray-400">Key Features</h2>
-                {data.features.map((feature: any, idx: number) => (
-                  <div key={idx} className="flex gap-12 group">
-                    <span className="text-4xl font-black text-gray-100 group-hover:text-black transition-luxury">0{idx + 1}</span>
-                    <div className="pt-2">
-                      <h3 className="text-xl font-bold text-black mb-4 tracking-tight">{feature.title}</h3>
-                      <p className="text-gray-500 font-light leading-relaxed">{feature.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {data.cta && (
-                <div className="mt-24 pt-12 border-t border-gray-100">
-                  {data.cta.href.startsWith('/') ? (
-                    <Link
-                      href={data.cta.href}
-                      className="inline-flex items-center gap-6 bg-black text-white px-10 py-6 tracking-widest uppercase text-xs font-bold hover:bg-gray-800 transition-luxury group"
-                    >
-                      {data.cta.title}
-                      <svg className="w-5 h-5 transition-transform group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </Link>
-                  ) : (
-                    <a 
-                      href={data.cta.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-6 bg-black text-white px-10 py-6 tracking-widest uppercase text-xs font-bold hover:bg-gray-800 transition-luxury group"
-                    >
-                      {data.cta.title}
-                      <svg className="w-5 h-5 transition-transform group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </a>
-                  )}
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Section */}
-      {data.gallery && (
-        <section className="py-32 bg-black text-white">
-          <div className="max-w-[1440px] mx-auto px-6">
-            <div className="text-center mb-24">
-              <h2 className="text-[10px] font-bold tracking-[0.4em] uppercase text-gray-500 mb-6">Gallery</h2>
-              <h3 className="text-5xl font-black tracking-tighter">SPACE EXPERIENCE</h3>
-            </div>
-            
-            <div className="relative group max-w-5xl mx-auto">
-              <div className="relative h-[500px] md:h-[700px] overflow-hidden bg-gray-900 shadow-2xl">
-                {data.gallery.map((img: string, idx: number) => (
-                  <div 
-                    key={idx}
-                    className={`absolute inset-0 transition-luxury duration-1000 ${idx === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-                  >
-                    <Image src={img} alt={`갤러리 이미지 ${idx + 1}`} fill className="object-cover" />
-                  </div>
-                ))}
               </div>
               
-              <div className="flex justify-center mt-12 gap-4">
-                {data.gallery.map((_: any, idx: number) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`h-[2px] transition-all duration-500 ${idx === currentSlide ? 'bg-white w-12' : 'bg-gray-800 w-6 hover:bg-gray-600'}`}
-                  />
-                ))}
+              <div className="w-full lg:w-1/2 order-1 lg:order-2">
+                <div className="mb-16">
+                  <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary mb-8">Overview</h2>
+                  <p className="text-2xl md:text-3xl text-black font-light leading-relaxed mb-12 break-keep">{data.description}</p>
+                </div>
+                <div className="space-y-12 break-keep">
+                  <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary">Key Features</h2>
+                  {data.features.map((feature: any, idx: number) => (
+                    <div key={idx} className="flex gap-8 group">
+                      <span className="text-3xl font-serif italic text-primary/20 group-hover:text-primary transition-all">0{idx + 1}</span>
+                      <div className="pt-1">
+                        <h3 className="text-lg font-bold text-black mb-3 tracking-tight">{feature.title}</h3>
+                        <p className="text-base text-gray-500 font-light leading-relaxed">{feature.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
+      ) : (
+        /* --- ALL OTHER PAGES: Natural Ratio Layout --- */
+        <>
+          <section className="py-24 md:py-32 bg-white">
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+              <div className="flex flex-col lg:flex-row gap-24 items-start">
+                <div className="lg:w-1/2 sticky top-40">
+                  <div className="luxury-shadow luxury-border bg-white rounded-sm overflow-hidden w-full">
+                    {data.images ? (
+                      <div className="grid">
+                        {data.images.map((img: string, idx: number) => (
+                          <div 
+                            key={idx} 
+                            className={`col-start-1 row-start-1 transition-all duration-1000 ${idx === mainImageSlide ? 'opacity-100' : 'opacity-0'}`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={img} alt={`${data.title} ${idx + 1}`} className="w-full h-auto block" />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="relative w-full">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={data.image} alt={data.title} className="w-full h-auto block" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="lg:w-1/2">
+                  <div className="mb-20">
+                    <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary mb-8">Overview</h2>
+                    <p className="text-2xl md:text-3xl text-black font-light leading-relaxed mb-12 break-keep">{data.description}</p>
+                  </div>
+                  <div className="space-y-16 break-keep">
+                    <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary">Key Features</h2>
+                    {data.features.map((feature: any, idx: number) => (
+                      <div key={idx} className="flex gap-12 group">
+                        <span className="text-3xl font-serif italic text-primary/20 group-hover:text-primary transition-all">0{idx + 1}</span>
+                        <div className="pt-2">
+                          <h3 className="text-xl font-bold text-black mb-4 tracking-tight">{feature.title}</h3>
+                          <p className="text-base text-gray-500 font-light leading-relaxed">{feature.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {data.cta && (
+                    <div className="mt-24 pt-12 border-t border-gray-100">
+                      <Link
+                        href={data.cta.href}
+                        target={data.cta.href.startsWith('http') ? "_blank" : "_self"}
+                        className="inline-flex items-center gap-6 bg-accent text-white px-10 py-5 tracking-[0.2em] uppercase text-[11px] font-bold hover:bg-primary transition-all rounded-sm shadow-xl"
+                      >
+                        {data.cta.title}
+                        <ArrowRight size={16} />
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {data.gallery && (
+            <section className="py-32 bg-secondary border-t border-gray-100">
+              <div className="max-w-[1440px] mx-auto px-6">
+                <div className="text-center mb-24">
+                  <h2 className="text-[10px] font-bold tracking-[0.4em] uppercase text-primary mb-6">Gallery</h2>
+                  <h3 className="text-5xl text-black tracking-tight uppercase">Space Experience</h3>
+                </div>
+                <div className="relative group max-w-5xl mx-auto">
+                  <div className="relative overflow-hidden bg-white luxury-shadow luxury-border rounded-sm">
+                    <div className="grid">
+                      {data.gallery.map((img: string, idx: number) => (
+                        <div 
+                          key={idx}
+                          className={`col-start-1 row-start-1 transition-all duration-1000 ${idx === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={img} alt={`갤러리 이미지 ${idx + 1}`} className="w-full h-auto block" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex justify-center mt-12 gap-4">
+                    {data.gallery.map((_: any, idx: number) => (
+                      <button 
+                        key={idx}
+                        onClick={() => setCurrentSlide(idx)}
+                        className={`h-[2px] transition-all duration-500 ${idx === currentSlide ? 'bg-primary w-12' : 'bg-gray-200 w-6 hover:bg-primary/50'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+        </>
       )}
     </div>
   );

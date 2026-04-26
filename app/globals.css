@@ -32,15 +32,24 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Luxury Typography */
+/* Updated Typography: Headings default to Sans for better number/Korean readability */
 h1, h2, h3, h4 {
-  font-family: var(--font-serif);
-  font-weight: 400;
+  font-family: var(--font-sans) !important;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
+/* Explicitly use Serif for decorative elements only */
 .font-serif {
-  font-family: var(--font-serif);
+  font-family: var(--font-serif) !important;
+}
+
+/* Numerical adjustment for clear visibility */
+.font-num {
+  font-family: var(--font-sans) !important;
+  font-weight: 600;
+  font-size: 1.05em;
+  font-variant-numeric: lining-nums;
 }
 
 /* Editorial Spacing */

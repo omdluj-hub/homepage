@@ -3,9 +3,20 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { ArrowRight } from "lucide-react";
-import { use } from "react";
+
+// 숫자를 감지하여 크기를 키우고 가독성을 높이는 헬퍼 함수
+const formatText = (text: string) => {
+  if (!text) return text;
+  return text.split(/(\d+)/).map((part, i) => 
+    /\d+/.test(part) ? (
+      <span key={i} className="font-sans inline-block translate-y-[-0.02em]" style={{ fontVariantNumeric: 'lining-nums' }}>
+        {part}
+      </span>
+    ) : part
+  );
+};
 
 const CLINIC_DATA: Record<string, any> = {
   // 피부 클리닉
@@ -22,7 +33,7 @@ const CLINIC_DATA: Record<string, any> = {
   "skin/acne": { 
     title: "여드름", 
     subtitle: "반복되는 여드름의 고리, 피지선 정상화와 내부 원인 개선으로 끊어냅니다", 
-    description: "여드름은 단순한 피부 표면의 문제가 아니라 체내 열 상충 증상과 각질 탈락 주기의 이상이 결합된 결과입니다. 후한의원 구미점은 정교한 압출로 씨앗을 제거함과 동시에, 한방 필링으로 모공 통로를 확보하고 맞춤 한약을 통해 내부의 열독을 다스려 재발률을 획기적으로 낮추는 입체적인 치료를 시행합니다.", 
+    description: "여드름은 단순한 피부 표면의 문제가 아니라 체내 열 상충 증상과 각질 탈락 주기의 이상이 결합된 결과입니다. 후한의원 구미점은 정교한 압출로 씨앗을 제거함과 동시에, 한방 필링으로 모공 통로를 확보하고 맞춤 한약을 통해 내부의 열독을 다스려 재발률을 낮추는 입체적인 치료를 시행합니다.", 
     image: "/images/clinic/여드름.jpg", 
     features: [
       { title: "정교한 압출 시스템", desc: "숙련된 의료진의 정밀 압출로 주변 조직 손상을 최소화하고 염증 확산을 방지합니다." },
@@ -33,7 +44,7 @@ const CLINIC_DATA: Record<string, any> = {
   "skin/scar": { 
     title: "여드름흉터", 
     subtitle: "멈춰버린 피부 재생 시간, 후한의원만의 특수 침법으로 다시 깨워드립니다", 
-    description: "함몰된 흉터 조직은 이미 재생이 멈춘 상태입니다. 후한의원의 '트랜스테라피'와 '엠톤' 시술은 유착된 흉터 하부 조직을 정교하게 끊어내고 새살이 차오를 수 있는 공간과 자극을 부여합니다. 인위적인 채움이 아닌 내 살이 직접 차오르는 방식이기에 치료 후에도 유지력이 매우 뛰어납니다.", 
+    description: "함몰된 흉터 조직은 이미 재생이 멈춘 상태입니다. 후한의원의 '트랜스테라피'와 '엠톤' 시술은 유착된 흉터 하부 조직을 정교하게 끊어내고 새살이 차오를 수 있는 공간과 자극을 부여합니다. 인위적인 채움이 아닌 내 살이 직접 차오르는 방식이기에 치료 후에도 유지력이 뛰어납니다.", 
     image: "/images/clinic/여드름흉터.jpg", 
     features: [
       { title: "흉터 하부 복원", desc: "단단하게 굳은 흉터 바닥면의 유착을 끊어 재생 세포의 활동을 유도합니다." },
@@ -55,18 +66,18 @@ const CLINIC_DATA: Record<string, any> = {
   "skin/wart": { 
     title: "사마귀", 
     subtitle: "바이러스 질환, 면역력이 근본적인 답입니다", 
-    description: "사마귀는 인유두종 바이러스(HPV) 감염 질환으로, 단순히 겉으로 보이는 병변만 제거하면 다시 번지기 쉽습니다. 몸의 면역 체계를 강화하여 바이러스를 스스로 이겨낼 수 있게 만드는 '면역 한약'과 병변을 직접 탈락시키는 '환부 집중 치료'를 병행하여 재발률을 낮추는 호전을 목표로 합니다.", 
+    description: "사마귀는 인유두종 바이러스(HPV) 감염 질환으로, 단순히 겉으로 보이는 병변만 제거하면 다시 번지기 쉽습니다. 몸의 면역 체계를 강화하여 바이러스를 스스로 이겨낼 수 있게 만드는 '면역 한약'과 병변을 직접 탈락시키는 '환부 집중 치료'를 병행하여 호전을 목표로 합니다.", 
     image: "/images/clinic/사마귀.jpg", 
     features: [
       { title: "면역 체계 재건", desc: "개인별 맞춤 한약으로 바이러스에 대항하는 신체 자생력을 증강시킵니다." },
-      { title: "무통 한방 제거", desc: "뜸과 약침을 활용하여 주변 조직 손상과 흉터 걱정 없이 병변을 제거합니다." },
+      { title: "무통 한방 제거", desc: "뜸과 약침을 활용하여 주변 조직 손상 걱정 없이 병변을 제거합니다." },
       { title: "전염 확산 차단", desc: "체계적인 관리를 통해 주변 부위로의 전염과 가족 간 감염을 방지합니다." }
     ] 
   },
   "skin/seborrheic": { 
     title: "지루성/주사피부염", 
     subtitle: "예민해진 피부 장벽, 근본 원인부터 다스려 다시 세웁니다", 
-    description: "가려움, 따가움, 홍조를 동반하는 지루성 피부염은 만성 염증성 질환입니다. 후한의원은 스테로이드 사용으로 얇아진 피부 장벽을 회복시키고, 상체로 쏠린 열을 내리는 '수승화강(水昇火降)' 원리를 통해 피부 환경을 정화하여 만성적인 염증의 고리를 끊어냅니다.", 
+    description: "가려움, 따가움, 홍조를 동반하는 지루성 피부염은 만성 염증성 질환입니다. 후한의원은 스테로이드 사용으로 얇아진 피부 장벽을 회복시키고, 상체로 쏠린 열을 내리는 '수승화강' 원리를 통해 피부 환경을 정화하여 만성적인 염증의 고리를 끊어냅니다.", 
     image: "/images/clinic/지루성피부염.jpg", 
     features: [
       { title: "상열감 해소 치료", desc: "얼굴과 두피로 몰리는 비정상적인 열감을 가라앉혀 염증 반응을 진정시킵니다." },
@@ -114,7 +125,7 @@ const CLINIC_DATA: Record<string, any> = {
     description: "한방 천연 생약 성분을 활용한 윤곽약침은 얼굴의 붓기와 지방 분해를 동시에 돕습니다. 림프 순환을 촉진하여 노폐물을 배출시키고, 비대해진 지방 세포를 축소시켜 수술 없이도 갸름하고 매끄러운 얼굴형을 완성합니다.", 
     image: "/images/clinic/윤곽약침.jpg", 
     features: [
-      { title: "천연 생약 분해", desc: "부작용 걱정 적은 한방 성분의 지방 분해 효과" },
+      { title: "천연 생약 분해", desc: "안전을 고려한 한방 성분의 지방 분해 효과" },
       { title: "림프 순환 촉진", desc: "정체된 순환을 깨워 얼굴 부종 및 독소 제거" }
     ] 
   },
@@ -143,7 +154,7 @@ const CLINIC_DATA: Record<string, any> = {
   "diet/medicine": { 
     title: "다이어트 한약", 
     subtitle: "단순한 억제가 아닌, 내 몸의 대사를 깨우는 건강한 다이어트의 시작", 
-    description: "후한의원의 다이어트 한약은 단순히 식욕을 억제하는 데 그치지 않습니다. 1:1 정밀 체질 진단을 통해 기초 대사량을 활성화하고, 체내 독소 배출과 부종 개선을 도와 요요 없는 감량을 목표로 합니다. 개인의 몸 상태에 가장 최적화된 처방으로 기력 저하 없이 건강하게 아름다워지는 시간을 경험하세요.", 
+    description: "후한의원의 다이어트 한약은 단순히 식욕을 억제하는 데 그치지 않습니다. 1:1 정밀 체질 진단을 통해 기초 대사량을 활성화하고, 체내 독소 배출과 부종 개선을 도와 요요 적은 감량을 목표로 합니다. 개인의 몸 상태에 가장 최적화된 처방으로 기력 저하 없이 건강하게 아름다워지는 시간을 경험하세요.", 
     images: ["/images/미감탕.JPG", "/images/다요스틱.JPG", "/images/미감에스.jpg", "/images/다요정.jpg"], 
     features: [
       { title: "1:1 맞춤형 정밀 처방", desc: "획일적인 조제가 아닌 개인의 체질, 목표 감량치, 평소 건강 상태를 분석하여 오직 나만을 위한 한약을 조제합니다." },
@@ -200,7 +211,7 @@ const CLINIC_DATA: Record<string, any> = {
   "traffic/info": { 
     title: "교통사고 접수 및 관리", 
     subtitle: "복잡한 절차 걱정 없이, 오직 회복에만 전념하세요", 
-    description: "교통사고 후유증 치료, 시작부터 끝까지 후한의원이 함께합니다. 사고 접수번호만 알려주시면 진료비 지불 보증 확인부터 보험사 연락까지 모든 행정 절차를 병원에서 직접 처리해 드립니다. 환자분은 본인부담금 없이 최상의 진료를 받으실 수 있습니다.", 
+    description: "교통사고 후유증 치료, 시작부터 끝까지 후한의원이 함께합니다. 사고 접수번호만 알려주시면 진료비 지불 보증 확인부터 보험사 연락까지 모든 행정 절차를 병원에서 직접 처리해 드립니다. 환자분은 본인부담금 없이 정성 어린 진료를 받으실 수 있습니다.", 
     image: "/images/traffic-info.png", 
     features: [
       { title: "본인부담금 0원", desc: "자동차보험 적용 시, 침·약침·추나·한약 등 모든 한방 치료를 본인 부담금 없이 받으실 수 있습니다." },
@@ -298,7 +309,7 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
   const category = unwrappedParams.slug[0];
   const data = CLINIC_DATA[fullPath];
   
-  const currentCategory = MENU_STRUCTURE.find(m => m.path === category);
+  const currentCategory = MENU_STRUCTURE.find(m => m.path === (category === 'beauty' ? 'skin' : category));
   const subMenus = currentCategory?.subMenus || [];
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -343,7 +354,7 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
                     : "border-transparent text-gray-400 hover:text-black"
                   }`}
                 >
-                  {menu.name}
+                  <span className="font-sans">{menu.name}</span>
                 </Link>
               );
             })}
@@ -357,11 +368,11 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
           <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-primary mb-8">
             Treatment Program
           </span>
-          <h1 className="text-4xl md:text-6xl text-black mb-8 tracking-tight uppercase">
-            {data.title}
+          <h1 className="text-4xl md:text-6xl text-black mb-8 tracking-tight uppercase font-sans font-bold">
+            {formatText(data.title)}
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed text-gray-500 break-keep">
-            {data.subtitle}
+            {formatText(data.subtitle)}
           </p>
         </div>
       </section>
@@ -372,7 +383,6 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
           <div className="max-w-[1440px] mx-auto px-6 md:px-12">
             <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
               <div className="w-full lg:w-1/2 order-2 lg:order-1 sticky top-40">
-                {/* Fixed container width but flexible image height for natural ratio */}
                 <div className="grid luxury-shadow luxury-border bg-white rounded-sm overflow-hidden">
                   {data.gallery.map((img: string, idx: number) => (
                     <div 
@@ -383,8 +393,6 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
                       <img src={img} alt={`${data.title} ${idx + 1}`} className="w-full h-auto block" />
                     </div>
                   ))}
-                  
-                  {/* Small dots indicator instead of large counter to avoid distraction */}
                   <div className="col-start-1 row-start-1 self-end justify-self-center mb-6 flex gap-2 z-20">
                     {data.gallery.map((_: any, idx: number) => (
                       <div key={idx} className={`h-1 transition-all ${idx === currentSlide ? 'w-6 bg-primary' : 'w-2 bg-gray-300'}`} />
@@ -395,17 +403,17 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
               
               <div className="w-full lg:w-1/2 order-1 lg:order-2">
                 <div className="mb-16">
-                  <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary mb-8">Overview</h2>
-                  <p className="text-2xl md:text-3xl text-black font-light leading-relaxed mb-12 break-keep">{data.description}</p>
+                  <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary mb-8 font-serif italic">Overview</h2>
+                  <p className="text-base md:text-lg text-black font-light leading-relaxed mb-12 break-keep">{formatText(data.description)}</p>
                 </div>
                 <div className="space-y-12 break-keep">
-                  <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary">Key Features</h2>
+                  <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary font-serif italic">Key Features</h2>
                   {data.features.map((feature: any, idx: number) => (
                     <div key={idx} className="flex gap-8 group">
                       <span className="text-3xl font-serif italic text-primary/20 group-hover:text-primary transition-all">0{idx + 1}</span>
                       <div className="pt-1">
-                        <h3 className="text-lg font-bold text-black mb-3 tracking-tight">{feature.title}</h3>
-                        <p className="text-base text-gray-500 font-light leading-relaxed">{feature.desc}</p>
+                        <h3 className="text-lg font-bold text-black mb-3 tracking-tight font-sans">{formatText(feature.title)}</h3>
+                        <p className="text-base text-gray-500 font-light leading-relaxed">{formatText(feature.desc)}</p>
                       </div>
                     </div>
                   ))}
@@ -415,7 +423,7 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
           </div>
         </section>
       ) : (
-        /* --- ALL OTHER PAGES: Natural Ratio Layout --- */
+        /* --- ALL OTHER PAGES --- */
         <>
           <section className="py-24 md:py-32 bg-white">
             <div className="max-w-[1440px] mx-auto px-6 md:px-12">
@@ -446,16 +454,17 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
                 <div className="lg:w-1/2">
                   <div className="mb-20">
                     <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary mb-8">Overview</h2>
-                    <p className="text-2xl md:text-3xl text-black font-light leading-relaxed mb-12 break-keep">{data.description}</p>
+                    <p className="text-base md:text-lg text-black font-light leading-relaxed mb-12 break-keep font-sans">{formatText(data.description)}</p>
+
                   </div>
                   <div className="space-y-16 break-keep">
                     <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary">Key Features</h2>
                     {data.features.map((feature: any, idx: number) => (
                       <div key={idx} className="flex gap-12 group">
-                        <span className="text-3xl font-serif italic text-primary/20 group-hover:text-primary transition-all">0{idx + 1}</span>
+                        <span className="text-3xl font-sans font-bold text-primary/20 group-hover:text-primary transition-all">0{idx + 1}</span>
                         <div className="pt-2">
-                          <h3 className="text-xl font-bold text-black mb-4 tracking-tight">{feature.title}</h3>
-                          <p className="text-base text-gray-500 font-light leading-relaxed">{feature.desc}</p>
+                          <h3 className="text-xl font-bold text-black mb-4 tracking-tight font-sans">{formatText(feature.title)}</h3>
+                          <p className="text-base text-gray-500 font-light leading-relaxed">{formatText(feature.desc)}</p>
                         </div>
                       </div>
                     ))}
@@ -482,7 +491,7 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
               <div className="max-w-[1440px] mx-auto px-6">
                 <div className="text-center mb-24">
                   <h2 className="text-[10px] font-bold tracking-[0.4em] uppercase text-primary mb-6">Gallery</h2>
-                  <h3 className="text-5xl text-black tracking-tight uppercase">Space Experience</h3>
+                  <h3 className="text-5xl text-black tracking-tight uppercase font-sans font-bold">Space Experience</h3>
                 </div>
                 <div className="relative group max-w-5xl mx-auto">
                   <div className="relative overflow-hidden bg-white luxury-shadow luxury-border rounded-sm">

@@ -4,6 +4,7 @@ create table if not exists visits (
   referer text,
   user_agent text,
   is_bot boolean,
+  ip text,
   created_at timestamp with time zone default now()
 );
 

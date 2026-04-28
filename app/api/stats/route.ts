@@ -15,6 +15,30 @@ export async function GET() {
     const { data: visits, error: vError } = await supabase.from('visits').select('*').order('created_at', { ascending: false }).limit(2000);
     if (vError) throw vError;
 
+    const totalVisits = visits.length;
+    const humanVisits = visits.filter(v => !v.is_bot).length;
+    const botVisits = visits.filter(v => v.is_bot).length;
+
+    const stats7d = {
+      total: visits.filter(v => v.created_at >= sevenDaysAgo).length,
+      human: visits.filter(v => v.created_at >= sevenDaysAgo && !v.is_bot).length,
+      bot: visits.filter(v => v.created_at >= sevenDaysAgo && v.is_bot).length,
+    };
+
+    const stats30d = {
+      total: visits.filter(v => v.created_at >= thirtyDaysAgo).length,
+      human: visits.filter(v => v.created_at >= thirtyDaysAgo && !v.is_bot).length,
+      bot: visits.filter(v => v.created_at >= thirtyDaysAgo && v.is_bot).length,
+    };
+
+    const recentRawVisits = visits.slice(0, 500).map(v => ({
+      ip: v.ip || 'unknown',
+      isBot: v.is_bot,
+      referer: v.referer,
+      path: v.path,
+      timestamp: v.created_at
+    }));
+
     const adminSupabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -81,13 +105,16 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      totalVisits: visits.length,
+      totalVisits,
+      humanVisits,
+      botVisits,
       unreadInquiries: uniqueInquiries.filter(i => !i.is_read).length,
-      stats7d: { total: visits.filter(v => v.created_at >= sevenDaysAgo).length },
-      stats30d: { total: visits.filter(v => v.created_at >= thirtyDaysAgo).length },
+      stats7d,
+      stats30d,
       pageViews,
       topReferers: Object.entries(referers).sort((a: any, b: any) => b[1] - a[1]).slice(0, 10),
-      recentInquiries: uniqueInquiries.slice(0, 50)
+      recentInquiries: uniqueInquiries.slice(0, 50),
+      recentRawVisits
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',

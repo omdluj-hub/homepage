@@ -17,6 +17,18 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const openPbtiPopup = () => {
+    const width = 500;
+    const height = 800;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    window.open(
+      "https://pbti-iota.vercel.app/",
+      "pbti_popup",
+      `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+    );
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -157,6 +169,12 @@ const Header = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-2 md:gap-6">
+              <button
+                onClick={openPbtiPopup}
+                className="text-primary border border-primary px-4 py-2 md:px-8 md:py-3 text-[10px] md:text-[11px] font-bold tracking-tight hover:bg-primary hover:text-white transition-all rounded-sm whitespace-nowrap"
+              >
+                내 피부 MBTI는?
+              </button>
               <a 
                 href="https://event-snowy-ten.vercel.app/" 
                 target="_blank"
@@ -220,6 +238,20 @@ const Header = () => {
                 </Link>
               </div>
             ))}
+            <div className="group overflow-hidden">
+              <button 
+                onClick={() => {
+                  setIsOpen(false);
+                  openPbtiPopup();
+                }}
+                className="flex items-baseline gap-6 text-left w-full group"
+              >
+                <span className="font-serif italic text-primary text-2xl">06</span>
+                <span className="text-5xl font-bold tracking-tighter uppercase group-hover:text-primary transition-colors">
+                  내 피부 MBTI는?
+                </span>
+              </button>
+            </div>
           </nav>
 
           <div className="mt-auto pt-12 border-t border-gray-100">

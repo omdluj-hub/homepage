@@ -4,7 +4,81 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import QuickInquiry from "@/components/QuickInquiry";
-import { ArrowRight, Star, Quote } from "lucide-react";
+import { ArrowRight, Star, Quote, Calendar } from "lucide-react";
+
+interface BlogPost {
+  title: string;
+  link: string;
+  pubDate: string;
+  contentSnippet: string;
+  thumbnail: string | null;
+}
+
+const BlogPostsLimit3 = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch("/api/blog");
+        const data = await response.json();
+        if (data.success) {
+          setPosts(data.posts.slice(0, 3));
+        }
+      } catch (error) {
+        console.error("Failed to fetch blog posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {posts.map((post, idx) => (
+        <article key={idx} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-full border border-gray-100">
+          <a href={post.link} target="_blank" rel="noopener noreferrer" className="relative aspect-[16/10] overflow-hidden">
+            {post.thumbnail ? (
+              <img 
+                src={post.thumbnail} 
+                alt={post.title} 
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-50 flex items-center justify-center text-gray-300 text-[10px] font-bold tracking-widest uppercase">Hoo Clinic</div>
+            )}
+          </a>
+          <div className="p-8 flex flex-col flex-grow">
+            <div className="flex items-center gap-2 text-[10px] font-bold text-primary mb-4 uppercase tracking-widest">
+              <Calendar size={12} />
+              {new Date(post.pubDate).toLocaleDateString("ko-KR")}
+            </div>
+            <h4 className="text-xl font-bold text-black mb-4 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+              <a href={post.link} target="_blank" rel="noopener noreferrer">{post.title}</a>
+            </h4>
+            <p className="text-sm text-gray-500 line-clamp-2 mb-8 font-light leading-relaxed">
+              {post.contentSnippet}
+            </p>
+            <a href={post.link} target="_blank" rel="noopener noreferrer" className="mt-auto inline-flex items-center gap-2 text-xs font-bold text-primary group/link">
+              Read More <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+};
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -236,6 +310,29 @@ export default function Home() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 03-1. Latest Columns from Naver Blog */}
+      <section className="section-padding bg-gray-50 overflow-hidden">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+            <div className="max-w-2xl">
+              <h2 className="text-xs font-bold tracking-[0.4em] uppercase text-primary mb-6">Health Insights</h2>
+              <h3 className="text-5xl md:text-6xl text-black">LATEST COLUMNS</h3>
+            </div>
+            <Link 
+              href="/about/column"
+              className="inline-flex items-center gap-3 text-sm font-bold text-primary group"
+            >
+              전체 칼럼 보기 
+              <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                <ArrowRight size={14} />
+              </div>
+            </Link>
+          </div>
+
+          <BlogPostsLimit3 />
         </div>
       </section>
 

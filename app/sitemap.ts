@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     '',
     '/about',
+    '/about/column',
     '/contact',
     // 피부 클리닉
     '/clinic/skin/acne',

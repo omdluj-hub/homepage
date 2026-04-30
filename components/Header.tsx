@@ -89,6 +89,7 @@ const Header = () => {
       href: "/about#director",
       subMenus: [
         { name: "의료진 소개", href: "/about#director" },
+        { name: "후한의원 칼럼", href: "/about/column" },
         { name: "찾아오시는 길", href: "/#location" },
       ]
     },

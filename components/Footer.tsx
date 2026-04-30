@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, Youtube, Phone, Clock, MapPin, ArrowUp } from "lucide-react";
+import { Instagram, Phone, Clock, MapPin, ArrowUp } from "lucide-react";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -23,11 +23,24 @@ const Footer = () => {
               우리는 당신의 아름다움이 가장 자연스럽게 빛나는 순간을 위해 끊임없이 연구하고 진심을 다해 진료합니다.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white hover:border-primary transition-all">
+              <a 
+                href="https://www.instagram.com/hoogumi" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white hover:border-primary transition-all"
+              >
                 <Instagram size={16} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white hover:border-primary transition-all">
-                <Youtube size={16} />
+              <a 
+                href="https://blog.naver.com/hoban2011902" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-[#03C75A] hover:border-[#03C75A] hover:text-white transition-all"
+                title="네이버 블로그"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                  <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/>
+                </svg>
               </a>
             </div>
           </div>

@@ -388,6 +388,7 @@ function StatsDetailView({ stats }: any) {
                         {visitor.location && (
                           <span className="text-[10px] text-gray-400 font-medium ml-1">📍 {visitor.location}</span>
                         )}
+
                       </div>
                     </td>
                     <td className="px-8 py-5">

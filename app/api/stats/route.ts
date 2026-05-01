@@ -57,7 +57,7 @@ export async function GET() {
 
     if (uniqueIps.length > 0) {
       try {
-        const locRes = await fetch('http://ip-api.com/batch?fields=query,city,regionName', {
+        const locRes = await fetch('https://demo.ip-api.com/batch?fields=query,city,regionName', {
           method: 'POST',
           body: JSON.stringify(uniqueIps.slice(0, 100)), // 최대 100개
         });

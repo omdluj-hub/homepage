@@ -12,12 +12,24 @@ export async function GET() {
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
+    // 한국 시간(KST) 기준 오늘 00:00 계산
+    const kstOffset = 9 * 60 * 60 * 1000;
+    const kstNow = new Date(now.getTime() + kstOffset);
+    const kstTodayStr = kstNow.toISOString().split('T')[0];
+    const todayStart = new Date(`${kstTodayStr}T00:00:00+09:00`).toISOString();
+
     const { data: visits, error: vError } = await supabase.from('visits').select('*').order('created_at', { ascending: false }).limit(2000);
     if (vError) throw vError;
 
     const totalVisits = visits.length;
     const humanVisits = visits.filter(v => !v.is_bot).length;
     const botVisits = visits.filter(v => v.is_bot).length;
+
+    const statsToday = {
+      total: visits.filter(v => v.created_at >= todayStart).length,
+      human: visits.filter(v => v.created_at >= todayStart && !v.is_bot).length,
+      bot: visits.filter(v => v.created_at >= todayStart && v.is_bot).length,
+    };
 
     const stats7d = {
       total: visits.filter(v => v.created_at >= sevenDaysAgo).length,
@@ -37,6 +49,35 @@ export async function GET() {
       referer: v.referer,
       path: v.path,
       timestamp: v.created_at
+    }));
+
+    // IP 위치 정보 추출 (최근 100개 방문 중 유니크 IP 대상)
+    const uniqueIps = Array.from(new Set(visits.slice(0, 100).map(v => v.ip).filter(ip => ip && ip !== '127.0.0.1' && ip !== 'unknown')));
+    let ipLocations: Record<string, string> = {};
+
+    if (uniqueIps.length > 0) {
+      try {
+        const locRes = await fetch('http://ip-api.com/batch?fields=query,city,regionName', {
+          method: 'POST',
+          body: JSON.stringify(uniqueIps.slice(0, 100)), // 최대 100개
+        });
+        if (locRes.ok) {
+          const locData = await locRes.json();
+          locData.forEach((item: any) => {
+            if (item.status === 'success') {
+              ipLocations[item.query] = `${item.city}, ${item.regionName}`;
+            }
+          });
+        }
+      } catch (e) {
+        console.error('IP Location Fetch Error:', e);
+      }
+    }
+
+    // 위치 정보 매핑
+    const visitsWithLocation = recentRawVisits.map(v => ({
+      ...v,
+      location: ipLocations[v.ip] || ''
     }));
 
     const adminSupabase = createClient(
@@ -109,12 +150,13 @@ export async function GET() {
       humanVisits,
       botVisits,
       unreadInquiries: uniqueInquiries.filter(i => !i.is_read).length,
+      statsToday,
       stats7d,
       stats30d,
       pageViews,
       topReferers: Object.entries(referers).sort((a: any, b: any) => b[1] - a[1]).slice(0, 10),
       recentInquiries: uniqueInquiries.slice(0, 50),
-      recentRawVisits
+      recentRawVisits: visitsWithLocation
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',

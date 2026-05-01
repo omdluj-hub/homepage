@@ -239,7 +239,7 @@ function DashboardView({ stats, onTabChange }: any) {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="오늘의 방문자" value={stats?.stats7d?.total / 7 || 0} unit="명" icon={<Users className="text-blue-500" />} color="bg-blue-50" />
+        <StatCard title="오늘의 방문자" value={stats?.statsToday?.total || 0} unit="명" icon={<Users className="text-blue-500" />} color="bg-blue-50" />
         <StatCard title="최근 7일 방문" value={stats?.stats7d?.total || 0} unit="명" icon={<Calendar className="text-green-500" />} color="bg-green-50" />
         <StatCard title="안 읽은 상담" value={stats?.unreadInquiries || 0} unit="건" icon={<Mail className="text-red-500" />} color="bg-red-50" />
         <StatCard title="전체 상담" value={stats?.recentInquiries?.length || 0} unit="건" icon={<MessageSquare className="text-orange-500" />} color="bg-orange-50" />
@@ -297,6 +297,7 @@ function StatsDetailView({ stats }: any) {
     if (!acc[ip]) {
       acc[ip] = {
         ip: ip,
+        location: visit.location,
         isBot: visit.isBot,
         referer: visit.referer,
         lastTimestamp: visit.timestamp,
@@ -375,12 +376,17 @@ function StatsDetailView({ stats }: any) {
                       </span>
                     </td>
                     <td className="px-8 py-5">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-gray-700 font-mono bg-gray-100 px-2 py-1 rounded-md">{visitor.ip}</span>
-                        {visitor.isBot ? (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">BOT</span>
-                        ) : (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">USER</span>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-gray-700 font-mono bg-gray-100 px-2 py-1 rounded-md">{visitor.ip}</span>
+                          {visitor.isBot ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">BOT</span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">USER</span>
+                          )}
+                        </div>
+                        {visitor.location && (
+                          <span className="text-[10px] text-gray-400 font-medium ml-1">📍 {visitor.location}</span>
                         )}
                       </div>
                     </td>

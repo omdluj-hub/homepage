@@ -21,7 +21,7 @@ export default function AboutPage() {
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + interiorImages.length) % interiorImages.length);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pt-[88px] md:pt-[96px]">
       {/* Page Header */}
       <section className="bg-secondary py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

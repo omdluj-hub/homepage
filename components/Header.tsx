@@ -224,19 +224,35 @@ const Header = () => {
             </button>
           </div>
 
-          <nav className="flex flex-col gap-10">
+          <nav className="flex flex-col gap-8 overflow-y-auto no-scrollbar py-4">
             {menuItems.map((item, idx) => (
-              <div key={item.name} className="group overflow-hidden">
-                <Link 
-                  href={item.href} 
-                  className="flex items-baseline gap-6"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="font-serif italic text-primary text-2xl">0{idx + 1}</span>
-                  <span className="text-5xl font-bold tracking-tighter uppercase group-hover:text-primary transition-colors">
-                    {item.name}
-                  </span>
-                </Link>
+              <div key={item.name} className="flex flex-col gap-4">
+                <div className="group overflow-hidden">
+                  <Link 
+                    href={item.href} 
+                    className="flex items-baseline gap-6"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span className="font-serif italic text-primary text-xl md:text-2xl">0{idx + 1}</span>
+                    <span className="text-3xl md:text-5xl font-bold tracking-tighter uppercase group-hover:text-primary transition-colors">
+                      {item.name}
+                    </span>
+                  </Link>
+                </div>
+                {item.subMenus.length > 0 && (
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 pl-10 md:pl-14">
+                    {item.subMenus.map((sub) => (
+                      <Link
+                        key={sub.name}
+                        href={sub.href}
+                        onClick={() => setIsOpen(false)}
+                        className="text-[13px] md:text-sm font-bold text-gray-400 hover:text-primary transition-colors"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
             <div className="group overflow-hidden">
@@ -247,8 +263,8 @@ const Header = () => {
                 }}
                 className="flex items-baseline gap-6 text-left w-full group"
               >
-                <span className="font-serif italic text-primary text-2xl">06</span>
-                <span className="text-5xl font-bold tracking-tighter uppercase group-hover:text-primary transition-colors">
+                <span className="font-serif italic text-primary text-xl md:text-2xl">06</span>
+                <span className="text-3xl md:text-5xl font-bold tracking-tighter uppercase group-hover:text-primary transition-colors">
                   내 피부 MBTI는?
                 </span>
               </button>

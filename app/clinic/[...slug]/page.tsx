@@ -337,9 +337,9 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
   if (!data) notFound();
 
   return (
-    <div className="flex flex-col bg-white pt-[88px] md:pt-[96px]">
+    <div className="flex flex-col bg-white pt-[110px] md:pt-[120px]">
       {/* Sub Navigation Bar */}
-      <nav className="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-[72px] md:top-[80px] z-40 overflow-x-auto no-scrollbar">
+      <nav className="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-[80px] md:top-[90px] z-40 overflow-x-auto no-scrollbar">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center justify-center min-w-max gap-8 md:gap-12">
             {subMenus.map((menu: any) => {

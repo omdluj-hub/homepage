@@ -20,7 +20,7 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   title: {
-    default: "후한의원 구미점 | 다이어트, 여드름, 입원실",
+    default: "후한의원 구미점-여드름, 다이어트, 교통사고 입원실",
     template: "%s | 후한의원 구미점"
   },
   description: "구미 여드름, 피부질환, 다이어트 한약, 교통사고 입원실 운영. 1인실 입원실 365일 운영.",
@@ -31,8 +31,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: '/images/logo.gif',
+  },
   openGraph: {
-    title: '후한의원 구미점',
+    title: '후한의원 구미점-여드름, 다이어트, 교통사고 입원실',
     description: '구미 여드름, 다이어트, 365일 입원실 운영',
     url: 'https://homepage-five-chi.vercel.app',
     siteName: '후한의원 구미점',

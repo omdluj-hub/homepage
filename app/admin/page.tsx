@@ -288,8 +288,55 @@ function DashboardView({ stats, onTabChange }: any) {
   );
 }
 
+const PAGE_SIZE = 20;
+
+function Pagination({ currentPage, totalPages, onPageChange }: { currentPage: number; totalPages: number; onPageChange: (p: number) => void }) {
+  if (totalPages <= 1) return null;
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  // 페이지가 많으면 앞/뒤 2개 + 현재 주변만 표시
+  const visible = pages.filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2);
+
+  return (
+    <div className="flex items-center justify-center gap-1 pt-6 pb-2">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 border border-gray-100 hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+      >
+        이전
+      </button>
+      {visible.map((p, i) => (
+        <>
+          {i > 0 && visible[i - 1] !== p - 1 && (
+            <span key={`ellipsis-${p}`} className="px-1 text-xs text-gray-300">…</span>
+          )}
+          <button
+            key={p}
+            onClick={() => onPageChange(p)}
+            className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
+              p === currentPage
+                ? 'bg-primary text-white shadow-sm'
+                : 'text-gray-500 hover:bg-gray-50 border border-gray-100 hover:border-primary hover:text-primary'
+            }`}
+          >
+            {p}
+          </button>
+        </>
+      ))}
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 border border-gray-100 hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+      >
+        다음
+      </button>
+    </div>
+  );
+}
+
 function StatsDetailView({ stats }: any) {
   const [expandedIp, setExpandedIp] = useState<string | null>(null);
+  const [visitorPage, setVisitorPage] = useState(1);
 
   // 방문 기록 그룹화 (IP 기준)
   const groupedVisits = stats?.recentRawVisits?.reduce((acc: any, visit: any) => {
@@ -314,6 +361,9 @@ function StatsDetailView({ stats }: any) {
   const visitorList = groupedVisits ? Object.values(groupedVisits).sort((a: any, b: any) => 
     new Date(b.lastTimestamp).getTime() - new Date(a.lastTimestamp).getTime()
   ) : [];
+
+  const visitorTotalPages = Math.max(1, Math.ceil(visitorList.length / PAGE_SIZE));
+  const pagedVisitors = visitorList.slice((visitorPage - 1) * PAGE_SIZE, visitorPage * PAGE_SIZE);
 
   return (
     <div className="space-y-12">
@@ -354,6 +404,9 @@ function StatsDetailView({ stats }: any) {
             </h3>
             <p className="text-sm text-gray-400 mt-1">IP별로 최근 활동을 묶어서 표시합니다.</p>
           </div>
+          <span className="text-xs text-gray-400 font-medium">
+            총 {visitorList.length}명 · {visitorPage}/{visitorTotalPages} 페이지
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -367,7 +420,7 @@ function StatsDetailView({ stats }: any) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {visitorList.map((visitor: any) => (
+              {pagedVisitors.map((visitor: any) => (
                 <Fragment key={visitor.ip}>
                   <tr className={`hover:bg-gray-50 transition-colors group ${expandedIp === visitor.ip ? 'bg-blue-50/20' : ''}`}>
                     <td className="px-8 py-5 whitespace-nowrap">
@@ -434,6 +487,9 @@ function StatsDetailView({ stats }: any) {
             </tbody>
           </table>
         </div>
+        <div className="px-8 border-t border-gray-50">
+          <Pagination currentPage={visitorPage} totalPages={visitorTotalPages} onPageChange={(p) => { setVisitorPage(p); setExpandedIp(null); }} />
+        </div>
       </section>
     </div>
   );
@@ -442,6 +498,14 @@ function StatsDetailView({ stats }: any) {
 function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
   const homeInquiries = stats?.recentInquiries?.filter((inq: any) => inq.source === "홈페이지") || [];
   const eventInquiries = stats?.recentInquiries?.filter((inq: any) => inq.source === "이벤트") || [];
+
+  const [homePage, setHomePage] = useState(1);
+  const [eventPage, setEventPage] = useState(1);
+
+  const homeTotalPages = Math.max(1, Math.ceil(homeInquiries.length / PAGE_SIZE));
+  const eventTotalPages = Math.max(1, Math.ceil(eventInquiries.length / PAGE_SIZE));
+  const pagedHome = homeInquiries.slice((homePage - 1) * PAGE_SIZE, homePage * PAGE_SIZE);
+  const pagedEvent = eventInquiries.slice((eventPage - 1) * PAGE_SIZE, eventPage * PAGE_SIZE);
 
   const toggleSelectAll = (list: any[]) => {
     if (selectedIds.length === list.length) {
@@ -468,7 +532,7 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
             <h3 className="font-bold text-gray-900 flex items-center gap-2">
               <Globe size={18} className="text-blue-500" /> 홈페이지 상담 내역
             </h3>
-            <p className="text-[11px] text-gray-400 mt-1">메인 홈페이지를 통한 간편 상담 신청 건입니다.</p>
+            <p className="text-[11px] text-gray-400 mt-1">메인 홈페이지를 통한 간편 상담 신청 건입니다. · {homePage}/{homeTotalPages} 페이지</p>
           </div>
           <span className="text-xs font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">{homeInquiries.length}건</span>
         </div>
@@ -486,7 +550,7 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {homeInquiries.map((inq: any) => (
+              {pagedHome.map((inq: any) => (
                 <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-blue-50/10' : ''}`}>
                   <td className="px-6 py-4"><button onClick={() => toggleSelect(inq.id)} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.includes(inq.id) ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></td>
                   <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>{!inq.is_read ? "NEW" : "읽음"}</span></td>
@@ -503,6 +567,9 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
             </tbody>
           </table>
         </div>
+        <div className="px-6 border-t border-gray-50">
+          <Pagination currentPage={homePage} totalPages={homeTotalPages} onPageChange={setHomePage} />
+        </div>
       </section>
 
       {/* --- 이벤트 상담 리스트 --- */}
@@ -512,7 +579,7 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
             <h3 className="font-bold text-gray-900 flex items-center gap-2">
               <ExternalLink size={18} className="text-orange-500" /> 이벤트 상담 내역
             </h3>
-            <p className="text-[11px] text-gray-400 mt-1">랜딩페이지(이벤트)를 통한 상담 신청 건입니다.</p>
+            <p className="text-[11px] text-gray-400 mt-1">랜딩페이지(이벤트)를 통한 상담 신청 건입니다. · {eventPage}/{eventTotalPages} 페이지</p>
           </div>
           <span className="text-xs font-bold text-orange-600 bg-orange-100 px-3 py-1 rounded-full">{eventInquiries.length}건</span>
         </div>
@@ -530,7 +597,7 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {eventInquiries.map((inq: any) => (
+              {pagedEvent.map((inq: any) => (
                 <tr key={inq.id} className={`hover:bg-gray-50 transition-colors ${!inq.is_read ? 'bg-orange-50/10' : ''}`}>
                   <td className="px-6 py-4"><button onClick={() => toggleSelect(inq.id)} className="text-gray-300 hover:text-primary transition-colors">{selectedIds.includes(inq.id) ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}</button></td>
                   <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${!inq.is_read ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>{!inq.is_read ? "NEW" : "읽음"}</span></td>
@@ -546,6 +613,9 @@ function InquiryListView({ stats, onView, selectedIds, setSelectedIds }: any) {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="px-6 border-t border-gray-50">
+          <Pagination currentPage={eventPage} totalPages={eventTotalPages} onPageChange={setEventPage} />
         </div>
       </section>
     </div>

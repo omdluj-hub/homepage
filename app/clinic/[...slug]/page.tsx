@@ -155,7 +155,7 @@ const CLINIC_DATA: Record<string, any> = {
     title: "다이어트 한약", 
     subtitle: "단순한 억제가 아닌, 내 몸의 대사를 깨우는 건강한 다이어트의 시작", 
     description: "후한의원의 다이어트 한약은 단순히 식욕을 억제하는 데 그치지 않습니다. 1:1 정밀 체질 진단을 통해 기초 대사량을 활성화하고, 체내 독소 배출과 부종 개선을 도와 요요 적은 감량을 목표로 합니다. 개인의 몸 상태에 가장 최적화된 처방으로 기력 저하 없이 건강하게 아름다워지는 시간을 경험하세요.", 
-    images: ["/images/미감탕.JPG", "/images/다요스틱.JPG", "/images/미감에스.jpg", "/images/다요정.jpg"], 
+    images: ["/images/미감탕.JPG", "/images/후한의원_다요정2.png", "/images/미감에스2.jpg", "/images/다요정.jpg"], 
     features: [
       { title: "1:1 맞춤형 정밀 처방", desc: "획일적인 조제가 아닌 개인의 체질, 목표 감량치, 평소 건강 상태를 분석하여 오직 나만을 위한 한약을 조제합니다." },
       { title: "에너지 대사 및 지방 연소 활성화", desc: "체내 대사량을 끌어올려 운동 효율을 극대화하고, 에너지를 스스로 소모하기 쉬운 몸의 환경을 만듭니다." },
@@ -431,16 +431,28 @@ export default function ClinicDetailPage({ params }: { params: Promise<{ slug: s
                 <div className="lg:w-1/2 sticky top-40">
                   <div className="luxury-shadow luxury-border bg-white rounded-sm overflow-hidden w-full">
                     {data.images ? (
-                      <div className="grid">
+                      <div className="relative w-full">
                         {data.images.map((img: string, idx: number) => (
-                          <div 
-                            key={idx} 
-                            className={`col-start-1 row-start-1 transition-all duration-1000 ${idx === mainImageSlide ? 'opacity-100' : 'opacity-0'}`}
+                          <div
+                            key={idx}
+                            className={`${idx === 0 ? 'relative' : 'absolute inset-0'} transition-opacity duration-1000 ${idx === mainImageSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={img} alt={`${data.title} ${idx + 1}`} className="w-full h-auto block" />
                           </div>
                         ))}
+                        {/* 슬라이드 인디케이터 */}
+                        {data.images.length > 1 && (
+                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                            {data.images.map((_: any, idx: number) => (
+                              <button
+                                key={idx}
+                                onClick={() => setMainImageSlide(idx)}
+                                className={`h-[2px] transition-all duration-500 ${idx === mainImageSlide ? 'bg-primary w-8' : 'bg-white/60 w-4 hover:bg-white'}`}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="relative w-full">

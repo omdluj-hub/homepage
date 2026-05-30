@@ -2,80 +2,155 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #1a1a1a;
-  --primary: #c5a67c; /* Muted Gold / Champagne */
-  --primary-light: #e6d5bc;
-  --secondary: #f9f7f4; /* Warm Sand / Off-white */
-  --accent: #111111;
-  --border: #eeeeee;
-  --text-muted: #888888;
+  --foreground: #1a1817;
+
+  /* Primary: 절제된 딥 타프 브라운 (기존 샴페인 골드 대체) */
+  --primary: #8B7355;
+  --primary-hover: #7a6349;
+  --primary-light: #D4C5B0;
+
+  /* Surface 계층 */
+  --secondary: #F5F3F0;   /* 스톤 화이트 */
+  --surface: #FAFAF9;     /* 카드 배경 */
+
+  /* Accent (다크) */
+  --accent: #1C1917;      /* 딥 웜 다크 (거의 검정이지만 따뜻함) */
+  --accent-soft: #2D2926; /* 약간 밝은 다크 (카드, 푸터 내부 등) */
+
+  /* 포인트 금선 */
+  --gold-line: #C9A96E;
+
+  /* 텍스트 */
+  --text-muted: #8a8480;
+  --text-dim: #b5b0aa;
+
+  /* 보더 */
+  --border: #e8e4df;
+  --border-dark: rgba(255,255,255,0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
   --color-secondary: var(--secondary);
+  --color-surface: var(--surface);
   --color-accent: var(--accent);
-  --color-border: var(--border);
+  --color-accent-soft: var(--accent-soft);
+  --color-gold-line: var(--gold-line);
   --color-text-muted: var(--text-muted);
-  --font-sans: "Pretendard", system-ui, sans-serif;
-  --font-serif: "Cormorant Garamond", "Noto Serif KR", serif;
+  --color-text-dim: var(--text-dim);
+  --color-border: var(--border);
+  --color-border-dark: var(--border-dark);
+
+  --font-sans: "Pretendard", system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Serif KR", "Cormorant Garamond", Georgia, serif;
+  --font-en: "Cormorant Garamond", Georgia, serif;
 }
 
+/* ─── Base ─────────────────────────────────────────── */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
 }
 
-/* Updated Typography: Headings default to Sans for better number/Korean readability */
+/* ─── Typography ────────────────────────────────────── */
 h1, h2, h3, h4 {
-  font-family: var(--font-sans) !important;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 
-/* Explicitly use Serif for decorative elements only */
+/* 세리프 데코 폰트 */
 .font-serif {
   font-family: var(--font-serif) !important;
 }
 
-/* Numerical adjustment for clear visibility */
+/* 영문 이탤릭 전용 */
+.font-en {
+  font-family: var(--font-en) !important;
+}
+
+/* 숫자 표기 명확성 */
 .font-num {
   font-family: var(--font-sans) !important;
   font-weight: 600;
-  font-size: 1.05em;
-  font-variant-numeric: lining-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
-/* Editorial Spacing */
+/* ─── Layout ────────────────────────────────────────── */
 .section-padding {
-  padding-top: 10rem;
-  padding-bottom: 10rem;
+  padding-top: 9rem;
+  padding-bottom: 9rem;
 }
 
-/* Custom Utilities */
+@media (max-width: 768px) {
+  .section-padding {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+/* ─── Utility ───────────────────────────────────────── */
 .text-balance {
   text-wrap: balance;
 }
 
+/* 고급 섀도 */
 .luxury-shadow {
-  box-shadow: 0 20px 80px -20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04), 0 20px 60px -10px rgba(0,0,0,0.08);
 }
 
+.luxury-shadow-lg {
+  box-shadow: 0 8px 32px -8px rgba(0,0,0,0.14), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* 골드 테두리 */
 .luxury-border {
-  border: 1px solid rgba(197, 166, 124, 0.2);
+  border: 1px solid rgba(201, 169, 110, 0.25);
 }
 
-/* Animations */
+/* 골드 구분선 */
+.gold-divider {
+  width: 48px;
+  height: 1px;
+  background: var(--gold-line);
+  display: block;
+}
+
+/* 다크 섹션 텍스트 기본 */
+.dark-section {
+  background: var(--accent);
+  color: #f0ece6;
+}
+
+/* 이미지 줌 호버 */
+.img-zoom-hover {
+  overflow: hidden;
+}
+.img-zoom-hover img {
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.img-zoom-hover:hover img {
+  transform: scale(1.06);
+}
+
+/* 부드러운 트랜지션 */
+.transition-luxury {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Animations ────────────────────────────────────── */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -83,21 +158,67 @@ h1, h2, h3, h4 {
   }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes goldPulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
 .animate-fade-in-up {
-  animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.reveal-delay-1 { animation-delay: 0.2s; }
-.reveal-delay-2 { animation-delay: 0.4s; }
-.reveal-delay-3 { animation-delay: 0.6s; }
+.animate-fade-in {
+  animation: fadeIn 0.8s ease both;
+}
 
-/* Image Effects */
-.img-zoom-hover {
-  overflow: hidden;
+.animate-scale-in {
+  animation: scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.img-zoom-hover img {
-  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+.reveal-delay-1 { animation-delay: 0.15s; }
+.reveal-delay-2 { animation-delay: 0.3s; }
+.reveal-delay-3 { animation-delay: 0.45s; }
+.reveal-delay-4 { animation-delay: 0.6s; }
+
+/* ─── Scroll Reveal ─────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.img-zoom-hover:hover img {
-  transform: scale(1.08);
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
+
+/* ─── Scrollbar ─────────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
